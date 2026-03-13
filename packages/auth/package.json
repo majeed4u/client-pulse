@@ -1,0 +1,24 @@
+{
+  "name": "@client-pulse/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@client-pulse/db": "workspace:*",
+    "@client-pulse/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@client-pulse/config": "workspace:*",
+    "typescript": "^5"
+  }
+}
