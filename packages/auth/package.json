@@ -13,6 +13,7 @@
   "dependencies": {
     "@client-pulse/db": "workspace:*",
     "@client-pulse/env": "workspace:*",
+    "@client-pulse/ui": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
     "zod": "catalog:"
