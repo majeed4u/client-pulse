@@ -21,7 +21,9 @@
       "@trpc/client": "^11.7.2",
       "@types/react": "^19.2.10",
       "@types/react-dom": "^19.2.3",
-      "tailwindcss": "^4.1.18"
+      "tailwindcss": "^4.1.18",
+      "@react-email/components": "^1.0.9",
+      "react-email": "^5.2.9"
     }
   },
   "type": "module",
@@ -40,6 +42,7 @@
   "dependencies": {
     "@client-pulse/env": "workspace:*",
     "dotenv": "catalog:",
+    "resend": "^6.9.3",
     "zod": "catalog:"
   },
   "devDependencies": {
