@@ -11,6 +11,8 @@
 		"auth:gen": "bun x @better-auth/cli generate --config ../.././packages/auth/src/index.ts --output ../.././packages/db/prisma/schema/auth.prisma"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.1009.0",
+		"@aws-sdk/s3-request-presigner": "^3.1009.0",
 		"@client-pulse/api": "workspace:*",
 		"@client-pulse/auth": "workspace:*",
 		"@client-pulse/db": "workspace:*",
@@ -22,7 +24,9 @@
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
 		"hono": "catalog:",
+		"isomorphic-dompurify": "^3.3.0",
 		"nodemailer": "^8.0.2",
+		"stripe": "^20.4.1",
 		"zod": "catalog:"
 	},
 	"devDependencies": {

@@ -1,8 +1,8 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated"
+  provider     = "prisma-client"
+  output       = "../generated"
   moduleFormat = "esm"
-  runtime = "nodejs"
+  runtime      = "nodejs"
 }
 
 datasource db {
@@ -12,16 +12,16 @@ datasource db {
 // ─── MULTI-TENANCY ────────────────────────────────────────────────────────────
 
 model Workspace {
-  id                   String    @id @default(cuid())
+  id                   String   @id @default(cuid())
   name                 String
-  slug                 String    @unique
+  slug                 String   @unique
   logoUrl              String?
-  plan                 Plan      @default(FREE)
-  defaultCurrency      String    @default("USD")
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  plan                 Plan     @default(FREE)
+  defaultCurrency      String   @default("USD")
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   members       WorkspaceMember[]
   projects      Project[]
