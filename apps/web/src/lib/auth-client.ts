@@ -1,6 +1,12 @@
 import { env } from "@client-pulse/env/web";
+import {
+	adminClient,
+	emailOTPClient,
+	inferAdditionalFields,
+} from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: env.NEXT_PUBLIC_SERVER_URL,
+	baseURL: env.NEXT_PUBLIC_SERVER_URL,
+	plugins: [emailOTPClient()],
 });
