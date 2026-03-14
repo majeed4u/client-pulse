@@ -82,7 +82,12 @@ export default function ProjectDetailPage() {
     ? `${env.NEXT_PUBLIC_WEB_URL}/portal/${project.portalToken}`
     : "";
 
-  type ActivityEntry = { id: string; type: string; actorName: string; createdAt: Date | string };
+  type ActivityEntry = {
+    id: string;
+    type: string;
+    actorName: string;
+    createdAt: Date | string;
+  };
   const activities: ActivityEntry[] = project?.activities ?? [];
 
   const copyPortalLink = () => {
