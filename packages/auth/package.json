@@ -1,25 +1,26 @@
 {
-  "name": "@client-pulse/auth",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@client-pulse/db": "workspace:*",
-    "@client-pulse/env": "workspace:*",
-    "@client-pulse/ui": "workspace:*",
-    "better-auth": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@client-pulse/config": "workspace:*",
-    "typescript": "^5"
-  }
+	"name": "@client-pulse/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@client-pulse/db": "workspace:*",
+		"@client-pulse/env": "workspace:*",
+		"@client-pulse/ui": "workspace:*",
+		"better-auth": "catalog:",
+		"dotenv": "catalog:",
+		"resend": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@client-pulse/config": "workspace:*",
+		"typescript": "^5"
+	}
 }

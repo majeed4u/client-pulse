@@ -1,27 +1,27 @@
 {
-  "name": "@client-pulse/api",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@client-pulse/auth": "workspace:*",
-    "@client-pulse/db": "workspace:*",
-    "@client-pulse/env": "workspace:*",
-    "@trpc/client": "catalog:",
-    "@trpc/server": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@client-pulse/config": "workspace:*",
-    "hono": "catalog:",
-    "typescript": "^5"
-  }
+	"name": "@client-pulse/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@client-pulse/auth": "workspace:*",
+		"@client-pulse/db": "workspace:*",
+		"@client-pulse/env": "workspace:*",
+		"@trpc/client": "catalog:",
+		"@trpc/server": "catalog:",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@client-pulse/config": "workspace:*",
+		"hono": "catalog:",
+		"typescript": "^5"
+	}
 }
