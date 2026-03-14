@@ -30,6 +30,7 @@
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-hook-form": "^7.71.2",
+		"react-qr-code": "^2.0.18",
 		"sonner": "catalog:",
 		"zod": "catalog:"
 	},

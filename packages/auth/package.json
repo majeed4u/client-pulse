@@ -16,6 +16,7 @@
 		"@client-pulse/ui": "workspace:*",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
+		"qrcode": "^1.5.3",
 		"resend": "catalog:",
 		"zod": "catalog:"
 	},

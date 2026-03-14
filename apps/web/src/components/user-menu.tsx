@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@client-pulse/ui/components/button";
 import {
   DropdownMenu,
@@ -25,7 +26,7 @@ export default function UserMenu() {
   if (!session) {
     return (
       <Link href="/sign-up">
-        <Button variant="outline">Sign In</Button>
+        <Button variant="outline">Sign Up</Button>
       </Link>
     );
   }
@@ -46,7 +47,7 @@ export default function UserMenu() {
               authClient.signOut({
                 fetchOptions: {
                   onSuccess: () => {
-                    router.push("/sign-up");
+                    router.push("/");
                   },
                 },
               });
