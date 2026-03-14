@@ -7,8 +7,6 @@ import Image from "next/image";
 import { env } from "@client-pulse/env/web";
 
 export const SocialSignInForm = () => {
-  const { data: session } = authClient.useSession();
-  const router = useRouter();
   async function handleSocialSignIn(provider: "google" | "microsoft") {
     await authClient.signIn.social(
       { provider, callbackURL: env.NEXT_PUBLIC_WEB_URL },
