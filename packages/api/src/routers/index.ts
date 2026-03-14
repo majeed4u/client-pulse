@@ -1,4 +1,4 @@
-import { router } from "../index";
+import { publicProcedure, router } from "../index";
 import { clientsRouter } from "./clients";
 import { deliverablesRouter } from "./deliverables";
 import { feedbackRouter } from "./feedback";
@@ -9,14 +9,15 @@ import { teamRouter } from "./team";
 import { workspaceRouter } from "./workspace";
 
 export const appRouter = router({
-	workspace: workspaceRouter,
-	clients: clientsRouter,
-	projects: projectsRouter,
-	deliverables: deliverablesRouter,
-	feedback: feedbackRouter,
-	invoices: invoicesRouter,
-	team: teamRouter,
-	notifications: notificationsRouter,
+  healthCheck: publicProcedure.query(() => true),
+  workspace: workspaceRouter,
+  clients: clientsRouter,
+  projects: projectsRouter,
+  deliverables: deliverablesRouter,
+  feedback: feedbackRouter,
+  invoices: invoicesRouter,
+  team: teamRouter,
+  notifications: notificationsRouter,
 });
 
 export type AppRouter = typeof appRouter;
