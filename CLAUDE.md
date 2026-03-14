@@ -6,6 +6,51 @@
 
 ---
 
+## 🚦 BUILD STATUS — READ THIS FIRST
+
+Last updated: March 15, 2026 — PR #7 merged to master.
+
+### ✅ COMPLETED (all merged to master)
+- Monorepo scaffolded via better-t-stack
+- Auth system: email/password + Google OAuth + Microsoft OAuth + 2FA (PRs #1–5)
+- DB schema: all business models in `packages/db/prisma/schema/schema.prisma`, migration run
+- `packages/env` server + web env vars fully expanded
+- `apps/server/src/index.ts`: Hono with tRPC, Better Auth, CORS, portal REST routes, webhooks
+- `packages/api/src/context.ts`: session + db + workspace resolution per request
+- All 8 tRPC routers: `workspace`, `clients`, `projects`, `deliverables`, `feedback`, `invoices`, `team`, `notifications`
+- Server services: `email.ts` (Resend), `storage.ts` (R2), `stripe.ts`
+- Portal REST routes: `apps/server/src/routes/portal.ts`
+- Stripe webhook: `apps/server/src/routes/webhooks/stripe.ts`
+- shadcn UI components installed in `packages/ui`: button, card, checkbox, dialog, dropdown-menu, field, input-otp, input, label, separator, skeleton, sonner, avatar, badge, progress, select, sheet, sidebar, tabs, textarea, tooltip
+- `apps/web/src/proxy.ts` — Next.js 16 auth guard (replaces middleware.ts)
+- Dashboard layout: `SidebarProvider` + `AppSidebar` + `SidebarInset`
+- Dashboard home page with stats cards + recent projects/invoices
+
+### ❌ NOT STARTED — FRONTEND PAGES (do these in order)
+- **Branch 12**: Clients pages — `dashboard/clients/page.tsx` (list) + `dashboard/clients/[id]/page.tsx` (detail) + `components/clients/`
+- **Branch 13**: Projects pages — `dashboard/projects/page.tsx` + `new/` + `[id]/` + `[id]/settings/` + `components/projects/`
+- **Branch 14**: Deliverables upload UI — `components/projects/deliverable-upload.tsx`, `deliverable-row.tsx`, `portal-link-copier.tsx`
+- **Branch 15**: Client Portal — `app/portal/[token]/page.tsx` + feedback + invoice subpages + `components/portal/`
+- **Branch 16**: Invoices pages — `dashboard/invoices/` list + create + detail + `components/invoices/`
+- **Branch 17**: Settings page — `dashboard/settings/page.tsx` + `dashboard/team/page.tsx`
+- **Branch 18**: Shared utilities — `lib/constants.ts`, `lib/utils.ts`, `hooks/use-workspace.ts`, `hooks/use-plan-gate.ts`, `hooks/use-portal.ts`, `components/shared/`
+- **Branch 19**: Email templates package — `packages/email-templates/`
+- **Branch 20**: Background jobs — `apps/server/src/jobs/` (invoice-reminder, mark-overdue, send-approval-request) + `apps/server/src/services/pdf.ts`
+- **Branch 21**: Polish — empty states, error boundaries, mobile responsiveness
+
+### ⚠️ CRITICAL TECHNICAL NOTES FOR NEXT AGENT
+1. **Next.js 16** is installed (CLAUDE.md originally said 15) — uses `proxy.ts` NOT `middleware.ts`. The exported function is `export default async function proxy`. `typedRoutes: true` is set in `next.config.ts` so Link `href` must be typed — use `href={"/path" as any}` when needed.
+2. **Package manager is `bun`** (not pnpm). All install commands use `bun add`, run commands use `bun`.
+3. **Base UI components** — `dropdown-menu.tsx` and `sidebar.tsx` in `packages/ui` use `@base-ui/react`. These do NOT support `asChild` prop. Use the `render` prop instead: `<SidebarMenuButton render={<Link href={"/path" as any} />}>`. `DropdownMenuTrigger` also uses `render` prop.
+4. **Auth pages** are at `apps/web/src/app/(auth)/sign-in/` and `(auth)/sign-up/` — not `/login/` or `/register/`.
+5. **Git workflow** — every branch MUST be individually pushed and merged via its own PR before moving to the next. Do NOT bundle multiple branches into one PR.
+6. **`pdf.ts` service** and **`apps/server/src/jobs/`** have not been created yet.
+7. **`packages/email-templates/`** package does not exist yet — needs to be created.
+
+---
+
+---
+
 ## 🧭 Project Overview
 
 **ClientPulse** is a B2B SaaS platform for freelancers and small agencies. It gives them a
@@ -21,7 +66,8 @@ and pay invoices — all through a single shareable link, with no client account
 ## 🏗️ Tech Stack
 
 ### Frontend — `apps/web`
-- **Framework:** Next.js 15 with App Router
+- **Framework:** Next.js 16 with App Router (`typedRoutes: true` — use `href={path as any}` when needed)
+- **Auth Guard:** `src/proxy.ts` (Next.js 16 — replaces `middleware.ts`; export is `export default async function proxy`)
 - **Language:** TypeScript strict mode — no `any` unless explicitly justified
 - **Styling:** Tailwind CSS v4 + shared `packages/ui` (shadcn/ui components)
 - **API Layer:** tRPC client via `src/utils/trpc.ts` — **all server calls go through tRPC, never raw fetch to the server**
@@ -79,8 +125,13 @@ and pay invoices — all through a single shareable link, with no client account
 ### Tooling
 - **Monorepo:** Turborepo (`turbo.json`)
 - **Linter/Formatter:** Biome (`biome.json`) — no ESLint, no Prettier
-- **Package Manager:** pnpm (better-t-stack default)
+- **Package Manager:** `bun` — use `bun add`, `bun run`, never `npm` or `pnpm`
 - **Build:** `tsdown` for the server (`apps/server/tsdown.config.ts`)
+
+### UI Components — Important
+- `packages/ui` uses `@base-ui/react` for `dropdown-menu` and `sidebar` components
+- These do NOT support `asChild` — use `render` prop: `<SidebarMenuButton render={<Link href={path as any} />}>`
+- `DropdownMenuTrigger` also uses `render` prop, not `asChild`
 
 ---
 
@@ -99,203 +150,153 @@ client-pulse/
 ├── turbo.json                              ✅
 │
 ├── apps/
-│   ├── server/                             ✅ (scaffold only)
+│   ├── server/                             ✅
 │   │   ├── package.json                    ✅
 │   │   ├── tsconfig.json                   ✅
 │   │   ├── tsdown.config.ts                ✅
 │   │   └── src/
-│   │       ├── index.ts                    ✅ → Expand: mount tRPC, portal REST, webhooks, CORS, Better Auth
-│   │       ├── middleware/
-│   │       │   ├── auth.ts                 # Session validation for tRPC context
-│   │       │   └── rate-limit.ts           # Upstash Redis rate limiting
+│   │       ├── index.ts                    ✅ (tRPC + Better Auth + CORS + portal routes + webhooks)
 │   │       ├── routes/
-│   │       │   ├── portal.ts               # GET|POST /portal/:token/* (public REST)
+│   │       │   ├── portal.ts               ✅ (all portal REST endpoints)
 │   │       │   └── webhooks/
-│   │       │       └── stripe.ts           # POST /webhooks/stripe
+│   │       │       └── stripe.ts           ✅ (Stripe webhook handler)
 │   │       ├── services/
-│   │       │   ├── email.ts                # Resend wrapper
-│   │       │   ├── storage.ts              # Cloudflare R2 operations
-│   │       │   ├── stripe.ts               # Stripe helpers
-│   │       │   └── pdf.ts                  # Invoice PDF generation
-│   │       └── jobs/                       # Trigger.dev job definitions
+│   │       │   ├── email.ts                ✅ (Resend wrapper)
+│   │       │   ├── storage.ts              ✅ (Cloudflare R2)
+│   │       │   ├── stripe.ts               ✅ (Stripe helpers)
+│   │       │   └── pdf.ts                  ❌ NOT CREATED YET
+│   │       └── jobs/                       ❌ NOT CREATED YET
 │   │           ├── invoice-reminder.ts
 │   │           ├── mark-overdue.ts
 │   │           └── send-approval-request.ts
 │   │
-│   └── web/                                ✅ (scaffold only)
+│   └── web/                                ✅
 │       ├── package.json                    ✅
-│       ├── next.config.ts                  ✅
+│       ├── next.config.ts                  ✅ (typedRoutes: true, reactCompiler: true)
 │       ├── tsconfig.json                   ✅
 │       ├── components.json                 ✅
 │       └── src/
+│           ├── proxy.ts                    ✅ (Next.js 16 auth guard — replaces middleware.ts)
 │           ├── app/
 │           │   ├── favicon.ico             ✅
-│           │   ├── layout.tsx              ✅
-│           │   ├── page.tsx                ✅ → landing / redirect to /dashboard
-│           │   ├── login/
-│           │   │   └── page.tsx            ✅ → add register tab + forgot password link
+│           │   ├── layout.tsx              ✅ (simplified — just Providers wrapper)
+│           │   ├── page.tsx                ✅ (redirect → /dashboard)
 │           │   ├── (auth)/
-│           │   │   ├── register/
-│           │   │   │   └── page.tsx
-│           │   │   └── forgot-password/
-│           │   │       └── page.tsx
-│           │   ├── dashboard/              ✅ (scaffold only)
-│           │   │   ├── layout.tsx          # Sidebar + nav shell + auth guard
-│           │   │   ├── page.tsx            ✅ → Full overview: stats, recent projects, activity
-│           │   │   ├── dashboard.tsx       ✅ → client component
-│           │   │   ├── projects/
-│           │   │   │   ├── page.tsx
-│           │   │   │   ├── new/
-│           │   │   │   │   └── page.tsx
-│           │   │   │   └── [id]/
-│           │   │   │       ├── page.tsx
-│           │   │   │       └── settings/
-│           │   │   │           └── page.tsx
-│           │   │   ├── clients/
-│           │   │   │   ├── page.tsx
-│           │   │   │   └── [id]/
-│           │   │   │       └── page.tsx
-│           │   │   ├── invoices/
-│           │   │   │   ├── page.tsx
-│           │   │   │   ├── new/
-│           │   │   │   │   └── page.tsx
-│           │   │   │   └── [id]/
-│           │   │   │       └── page.tsx
-│           │   │   ├── team/
-│           │   │   │   └── page.tsx        # Agency plan only
-│           │   │   └── settings/
-│           │   │       └── page.tsx
-│           │   └── portal/                 # Public — NO auth middleware
-│           │       └── [token]/
-│           │           ├── page.tsx        # Portal home
-│           │           ├── feedback/
-│           │           │   └── page.tsx
-│           │           └── invoice/
-│           │               └── [invoiceId]/
-│           │                   └── page.tsx
+│           │   │   ├── sign-in/page.tsx    ✅
+│           │   │   └── sign-up/page.tsx    ✅
+│           │   ├── profile/page.tsx        ✅
+│           │   └── dashboard/
+│           │       ├── layout.tsx          ✅ (SidebarProvider + AppSidebar + SidebarInset)
+│           │       ├── page.tsx            ✅ (stats cards + recent projects/invoices)
+│           │       ├── clients/
+│           │       │   ├── page.tsx        ❌ Branch 12
+│           │       │   └── [id]/page.tsx   ❌ Branch 12
+│           │       ├── projects/
+│           │       │   ├── page.tsx        ❌ Branch 13
+│           │       │   ├── new/page.tsx    ❌ Branch 13
+│           │       │   └── [id]/
+│           │       │       ├── page.tsx    ❌ Branch 13
+│           │       │       └── settings/page.tsx ❌ Branch 13
+│           │       ├── invoices/
+│           │       │   ├── page.tsx        ❌ Branch 16
+│           │       │   ├── new/page.tsx    ❌ Branch 16
+│           │       │   └── [id]/page.tsx   ❌ Branch 16
+│           │       ├── team/page.tsx       ❌ Branch 17
+│           │       └── settings/page.tsx   ❌ Branch 17
+│           ├── app/portal/                 ❌ Branch 15 — NO auth proxy, public
+│           │   └── [token]/
+│           │       ├── page.tsx
+│           │       ├── feedback/page.tsx
+│           │       └── invoice/[invoiceId]/page.tsx
 │           ├── components/
 │           │   ├── header.tsx              ✅
 │           │   ├── loader.tsx              ✅
 │           │   ├── mode-toggle.tsx         ✅
-│           │   ├── providers.tsx           ✅ → add TRPCProvider + QueryClientProvider
-│           │   ├── sign-in-form.tsx        ✅
-│           │   ├── sign-up-form.tsx        ✅
+│           │   ├── providers.tsx           ✅
 │           │   ├── theme-provider.tsx      ✅
 │           │   ├── user-menu.tsx           ✅
 │           │   ├── dashboard/
-│           │   │   ├── sidebar.tsx
-│           │   │   ├── project-card.tsx
-│           │   │   ├── stats-card.tsx
-│           │   │   ├── activity-feed.tsx
-│           │   │   └── plan-gate-banner.tsx
-│           │   ├── projects/
+│           │   │   └── sidebar.tsx         ✅ (AppSidebar — uses render prop, not asChild)
+│           │   ├── clients/                ❌ Branch 12
+│           │   │   ├── client-form.tsx
+│           │   │   └── client-card.tsx
+│           │   ├── projects/               ❌ Branch 13 + 14
 │           │   │   ├── project-form.tsx
 │           │   │   ├── deliverable-row.tsx
 │           │   │   ├── deliverable-upload.tsx
 │           │   │   └── portal-link-copier.tsx
-│           │   ├── invoices/
+│           │   ├── invoices/               ❌ Branch 16
 │           │   │   ├── invoice-builder.tsx
 │           │   │   ├── invoice-line-items.tsx
 │           │   │   └── currency-input.tsx
-│           │   ├── portal/
+│           │   ├── portal/                 ❌ Branch 15
 │           │   │   ├── portal-header.tsx
 │           │   │   ├── deliverable-card.tsx
 │           │   │   ├── approval-dialog.tsx
 │           │   │   ├── feedback-composer.tsx
 │           │   │   └── invoice-view.tsx
-│           │   └── shared/
+│           │   └── shared/                 ❌ Branch 18
 │           │       ├── empty-state.tsx
 │           │       ├── file-preview.tsx
 │           │       ├── status-badge.tsx
 │           │       └── upgrade-modal.tsx
 │           ├── lib/
 │           │   ├── auth-client.ts          ✅
-│           │   ├── constants.ts            # PLAN_LIMITS, ALLOWED_MIME_TYPES, etc.
-│           │   └── utils.ts                # formatCurrency(), formatDate(), cn()
+│           │   ├── auth-utils.ts           ✅
+│           │   ├── constants.ts            ❌ Branch 18 (PLAN_LIMITS, ALLOWED_MIME_TYPES)
+│           │   └── utils.ts                ❌ Branch 18 (formatCurrency, formatDate, cn)
 │           ├── hooks/
-│           │   ├── use-workspace.ts        # Active workspace from session
-│           │   ├── use-plan-gate.ts        # Can user perform X given their plan?
-│           │   └── use-portal.ts           # Fetch portal data by token
+│           │   ├── use-workspace.ts        ❌ Branch 18
+│           │   ├── use-plan-gate.ts        ❌ Branch 18
+│           │   └── use-portal.ts           ❌ Branch 18
 │           └── utils/
-│               └── trpc.ts                 ✅ → point to server URL from packages/env/web
+│               └── trpc.ts                 ✅
 │
 └── packages/
-    ├── api/                                ✅ (scaffold only)
+    ├── api/                                ✅
     │   ├── package.json                    ✅
     │   ├── tsconfig.json                   ✅
     │   └── src/
-    │       ├── index.ts                    ✅ → full appRouter merging all sub-routers
-    │       ├── context.ts                  ✅ → session + db + workspace resolution
-    │       ├── trpc.ts                     # t instance, base procedures, requireWorkspace helper
+    │       ├── index.ts                    ✅ (full appRouter + healthCheck)
+    │       ├── context.ts                  ✅ (session + db + workspace per request)
     │       └── routers/
-    │           ├── index.ts                ✅ → wire all sub-routers
-    │           ├── workspace.ts
-    │           ├── projects.ts
-    │           ├── deliverables.ts
-    │           ├── feedback.ts
-    │           ├── invoices.ts
-    │           ├── clients.ts
-    │           ├── team.ts
-    │           └── notifications.ts
+    │           ├── index.ts                ✅
+    │           ├── workspace.ts            ✅
+    │           ├── projects.ts             ✅
+    │           ├── deliverables.ts         ✅
+    │           ├── feedback.ts             ✅
+    │           ├── invoices.ts             ✅
+    │           ├── clients.ts              ✅
+    │           ├── team.ts                 ✅
+    │           └── notifications.ts        ✅
     │
-    ├── auth/                               ✅ (scaffold only)
-    │   ├── package.json                    ✅
-    │   ├── tsconfig.json                   ✅
-    │   └── src/
-    │       └── index.ts                    ✅ → full Better Auth config (Google, email, DB adapter)
+    ├── auth/                               ✅
+    │   └── src/index.ts                    ✅ (email + Google + Microsoft OAuth + 2FA)
     │
-    ├── db/                                 ✅ (scaffold only)
-    │   ├── package.json                    ✅
-    │   ├── prisma.config.ts                ✅
-    │   ├── tsconfig.json                   ✅
-    │   ├── prisma/
-    │   │   └── schema/
-    │   │       ├── auth.prisma             ✅ → DO NOT EDIT
-    │   │       └── schema.prisma           ✅ → Add all business models here
-    │   └── src/
-    │       └── index.ts                    ✅ → PrismaClient singleton export
+    ├── db/                                 ✅
+    │   ├── prisma/schema/
+    │   │   ├── auth.prisma                 ✅ DO NOT EDIT
+    │   │   └── schema.prisma               ✅ (all business models)
+    │   └── src/index.ts                    ✅ (PrismaClient singleton)
     │
-    ├── env/                                ✅ (scaffold only)
-    │   ├── package.json                    ✅
-    │   ├── tsconfig.json                   ✅
+    ├── env/                                ✅
     │   └── src/
-    │       ├── server.ts                   ✅ → expand with all server vars
-    │       └── web.ts                      ✅ → expand with all NEXT_PUBLIC_ vars
+    │       ├── server.ts                   ✅ (DATABASE_URL, BETTER_AUTH_*, GOOGLE_*, MICROSOFT_*, STRIPE_*, RESEND_*, R2_*)
+    │       └── web.ts                      ✅ (NEXT_PUBLIC_SERVER_URL, NEXT_PUBLIC_WEB_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
     │
     ├── config/                             ✅
-    │   ├── package.json                    ✅
-    │   └── tsconfig.base.json              ✅
     │
-    ├── ui/                                 ✅ (scaffold only)
-    │   ├── package.json                    ✅
-    │   ├── components.json                 ✅
-    │   ├── tsconfig.json                   ✅
+    ├── ui/                                 ✅
     │   └── src/
-    │       ├── components/                 # Add new shadcn components here via CLI
-    │       │   ├── button.tsx              ✅
-    │       │   ├── card.tsx                ✅
-    │       │   ├── checkbox.tsx            ✅
-    │       │   ├── dropdown-menu.tsx       ✅
-    │       │   ├── input.tsx               ✅
-    │       │   ├── label.tsx               ✅
-    │       │   ├── skeleton.tsx            ✅
-    │       │   ├── sonner.tsx              ✅
-    │       │   ├── badge.tsx               # pnpm dlx shadcn add badge
-    │       │   ├── dialog.tsx              # pnpm dlx shadcn add dialog
-    │       │   ├── select.tsx              # pnpm dlx shadcn add select
-    │       │   ├── table.tsx               # pnpm dlx shadcn add table
-    │       │   ├── tabs.tsx                # pnpm dlx shadcn add tabs
-    │       │   ├── textarea.tsx            # pnpm dlx shadcn add textarea
-    │       │   ├── tooltip.tsx             # pnpm dlx shadcn add tooltip
-    │       │   ├── separator.tsx           # pnpm dlx shadcn add separator
-    │       │   ├── avatar.tsx              # pnpm dlx shadcn add avatar
-    │       │   └── progress.tsx            # pnpm dlx shadcn add progress
-    │       ├── lib/
-    │       │   └── utils.ts               ✅
-    │       └── styles/
-    │           └── globals.css            ✅
+    │       ├── components/                 ✅ (button, card, checkbox, dialog, dropdown-menu,
+    │       │                                  field, input-otp, input, label, separator,
+    │       │                                  skeleton, sonner, avatar, badge, progress,
+    │       │                                  select, sheet, sidebar, tabs, textarea, tooltip)
+    │       ├── hooks/use-mobile.ts         ✅
+    │       ├── lib/utils.ts                ✅
+    │       └── styles/globals.css          ✅
     │
-    └── email-templates/                    # Create this package
+    └── email-templates/                    ❌ Branch 19 — create this package
         ├── package.json
         ├── tsconfig.json
         └── src/
@@ -928,7 +929,8 @@ return c.json({ error: { code: 'TOKEN_INVALID', message: 'Portal link is invalid
 - Prefer Server Components for data fetching; `"use client"` only for interactivity
 - All images via `next/image`, never raw `<img>`
 - Always render loading (`<Skeleton />`) and error states
-- Auth guard via `middleware.ts` in `apps/web/src` — redirect unauthenticated users away from `/dashboard`
+- Auth guard via `proxy.ts` in `apps/web/src` (Next.js 16) — redirect unauthenticated users away from `/dashboard`
+- `typedRoutes: true` — use `href={path as any}` when the path is a dynamic string
 
 ### tRPC
 - Thin route handlers — delegate business logic to `apps/server/src/services/`
@@ -940,11 +942,19 @@ return c.json({ error: { code: 'TOKEN_INVALID', message: 'Portal link is invalid
 - `$transaction` for multi-step writes
 - Run `pnpm db:generate` after every schema change
 
-### Git
-- Branch: `feat/invoice-pdf`, `fix/portal-token-regen`
-- Commits: `type(scope): message` e.g. `feat(deliverables): R2 presign upload flow`
+### Git — STRICT WORKFLOW
+- **Every branch must have its own PR and be merged before starting the next branch**
+- **Never bundle multiple feature branches into one PR**
+- Naming: `12-clients-pages`, `13-projects-pages`, `14-deliverables-ui`, etc.
+- Commits: `type(scope): message` e.g. `feat(clients): list and detail pages`
 - Types: `feat` `fix` `chore` `refactor` `test` `docs`
-- Never commit directly to `main`
+- Workflow per branch:
+  1. `git checkout -b <branch-name>`
+  2. Make changes
+  3. `git add -A && git commit -m "..."`
+  4. `git push origin <branch-name>`
+  5. `gh pr create --base master`
+  6. `gh pr merge --merge --delete-branch`
 
 ---
 
@@ -962,48 +972,41 @@ return c.json({ error: { code: 'TOKEN_INVALID', message: 'Portal link is invalid
 
 ## 📦 MVP Build Order
 
-Follow this sequence exactly. Each step depends on the previous.
+Each item = one git branch + one PR. Do NOT combine.
 
-1. ✅ **Monorepo scaffolded** via better-t-stack
-2. **Expand `packages/env`** — add all env vars with Zod validation
-3. **Expand `packages/db/prisma/schema/schema.prisma`** — all business models → run first migration
-4. **Expand `packages/auth/src/index.ts`** — full Better Auth config (Google OAuth, email verification)
-5. **Expand `apps/server/src/index.ts`** — mount tRPC, Better Auth, CORS, portal routes, webhook routes
-6. **Expand `packages/api/src/context.ts`** — resolve session + workspace per request
-7. **`workspace` tRPC router** — create/get/update + auto-create on first login
-8. **Auth pages** — register page, forgot-password page; enhance login page with both tabs
-9. **Dashboard layout** — sidebar, nav, `middleware.ts` for auth guard
-10. **`clients` tRPC router** + Clients pages (list, detail)
-11. **`projects` tRPC router** + Projects pages (list, create, detail, settings)
-12. **`deliverables` tRPC router** — presign + R2 upload + confirm + deliverable UI
-13. **Client Portal** — `/portal/[token]` page + Hono REST routes + approve/reject flow
-14. **`feedback` tRPC router** + feedback UI on dashboard + portal feedback form
-15. **`invoices` tRPC router** + invoice builder UI + PDF generation
-16. **Stripe subscription** — checkout + billing portal + subscription webhook handlers
-17. **Stripe invoice payments** — Payment Links + `payment_intent.succeeded` webhook
-18. **`packages/email-templates`** package + Resend service in `apps/server/src/services/email.ts`
-19. **Trigger.dev jobs** — invoice-reminder + mark-overdue + approval-request
-20. **Activity log** + dashboard stats (total earned, pending invoices, active projects count)
-21. **Settings page** — workspace profile, notification preferences, billing portal link, danger zone
-22. **Polish** — empty states, loading skeletons, error boundaries, mobile responsiveness, Sentry
+| # | Branch | Status | Description |
+|---|--------|--------|-------------|
+| 1–11 | (various) | ✅ DONE | Auth, DB, env, all tRPC routers, server services, portal REST, dashboard layout/sidebar |
+| 12 | `12-clients-pages` | ❌ NEXT | Clients list page + detail page + client form/card components |
+| 13 | `13-projects-pages` | ❌ | Projects list + new + detail + settings pages + components |
+| 14 | `14-deliverables-ui` | ❌ | Deliverable upload UI, row component, portal link copier |
+| 15 | `15-client-portal` | ❌ | `/portal/[token]` pages + portal components (approval, feedback, invoice view) |
+| 16 | `16-invoices-pages` | ❌ | Invoices list + new + detail pages + invoice builder component |
+| 17 | `17-settings-team` | ❌ | Settings page + team management page |
+| 18 | `18-shared-utilities` | ❌ | `lib/constants.ts`, `lib/utils.ts`, hooks, shared components (empty-state, status-badge, upgrade-modal) |
+| 19 | `19-email-templates` | ❌ | `packages/email-templates/` package with all 9 React Email templates |
+| 20 | `20-background-jobs` | ❌ | `apps/server/src/jobs/` Trigger.dev jobs + `services/pdf.ts` PDF generation |
+| 21 | `21-polish` | ❌ | Empty states, error boundaries, loading skeletons, mobile responsive, Sentry |
 
 ---
 
 ## 🧠 Agent Behavior Rules
 
-- **Read this file fully before every task** — do not skim
+- **Read the BUILD STATUS section at the top first** — it tells you exactly what's done and what's next
+- **One branch = one PR = one merge** before moving on. Never bundle branches.
 - **Respect monorepo boundaries:** frontend in `apps/web`, business logic in `packages/api`, server wiring in `apps/server`, DB in `packages/db`
 - **Never use `process.env` directly** — always import from `packages/env`
 - **Never edit `auth.prisma`** — Better Auth manages it completely
-- **All frontend → server calls go through tRPC** — never raw fetch to Hono (exception: portal pages which call REST)
+- **All frontend → server calls go through tRPC** — never raw fetch to Hono (exception: portal pages which call REST endpoints directly)
 - **Always enforce plan limits on the server** — frontend gates are UX convenience, not security
-- **Run `pnpm db:generate` after every schema change** — commit the updated Prisma client
+- **Run `bun db:generate` after every schema change** — commit the updated Prisma client
 - **Run `biome check --apply` before committing** any file
 - **Add shadcn components inside `packages/ui`**, not inside `apps/web`
+- **Base UI render prop pattern** — `<SidebarMenuButton render={<Link href={path as any} />}>` — never `asChild`
 - **The portal is the most critical user-facing surface** — test portal flows after any change to projects, deliverables, or invoices
 - **Build simpler first** — leave `// TODO: enhancement idea` comments instead of over-engineering
 
 ---
 
-*Last updated: Initial build — ClientPulse v1.0 MVP*
-*Stack: better-t-stack · Next.js 15 · Hono · tRPC · Better Auth · Prisma · Neon Postgres · Cloudflare R2 · Stripe · Resend · Trigger.dev*
+*Last updated: March 15, 2026 — PR #7 merged (branch 11)*
+*Stack: better-t-stack · Next.js 16 · Hono · tRPC · Better Auth · Prisma · Neon Postgres · Cloudflare R2 · Stripe · Resend · Trigger.dev · bun*
