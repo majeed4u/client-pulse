@@ -1,3 +1,9 @@
 {
-    "svg.preview.background": "white"
+    "svg.preview.background": "white",
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /home/majed/devolopment/javascript/client-pulse && git checkout master && git pull origin master && git checkout -b 12-clients-pages$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }
