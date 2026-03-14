@@ -19,6 +19,7 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
 
 const formSchema = z
   .object({
@@ -31,6 +32,7 @@ const formSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
+    path: ["confirmPassword"],
   });
 
 type FormSchemaType = z.infer<typeof formSchema>;
@@ -163,7 +165,7 @@ export const SignupForm = () => {
                     id={field.name}
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter your password"
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     className=" py-6 rounded-md placeholder:text-sm text-base"
                     type="password"
                   />
@@ -183,7 +185,7 @@ export const SignupForm = () => {
                     id={field.name}
                     aria-invalid={fieldState.invalid}
                     placeholder="Confirm your password"
-                    autoComplete="new-password"
+                    autoComplete="current-password"
                     className=" py-6 rounded-md placeholder:text-sm text-base"
                     type="password"
                   />
@@ -202,6 +204,18 @@ export const SignupForm = () => {
           >
             {isSubmitting ? "Sending..." : "Sign Up"}
           </Button>
+
+          <div>
+            <p className="text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                href="/sign-in"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Sign In
+              </Link>
+            </p>
+          </div>
         </form>
       ) : (
         <div className="space-y-4">
