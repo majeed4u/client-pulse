@@ -6,37 +6,51 @@ import { admin as adminPlugin, emailOTP } from "better-auth/plugins";
 import { sendOTPEmail } from "./lib/mailer";
 
 export const auth = betterAuth({
-	database: prismaAdapter(prisma, {
-		provider: "postgresql",
-	}),
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
 
-	trustedOrigins: [env.CORS_ORIGIN],
-	emailAndPassword: {
-		enabled: true,
-	},
-	secret: env.BETTER_AUTH_SECRET,
-	baseURL: env.BETTER_AUTH_URL,
-	advanced: {
-		defaultCookieAttributes: {
-			sameSite: "none",
-			secure: true,
-			httpOnly: true,
-		},
-	},
-	plugins: [
-		adminPlugin(),
-		emailOTP({
-			async sendVerificationOTP({ email, otp, type }) {
-				if (type === "sign-in") {
-					await sendOTPEmail(email, otp, "sign-in");
-				} else if (type === "email-verification") {
-					// Send the OTP for email verification
-					await sendOTPEmail(email, otp, "email-verification");
-				} else {
-					// Send the OTP for password reset
-					await sendOTPEmail(email, otp, "other");
-				}
-			},
-		}),
-	],
+  trustedOrigins: [env.CORS_ORIGIN],
+  secret: env.BETTER_AUTH_SECRET,
+  baseURL: env.BETTER_AUTH_URL,
+  emailAndPassword: {
+    enabled: true,
+  },
+  socialProviders: {
+    microsoft: {
+      clientId: env.MICROSOFT_CLIENT_ID,
+      clientSecret: env.MICROSOFT_CLIENT_SECRET,
+      // Optional
+      tenantId: env.MICROSOFT_TENANT_ID || "",
+      prompt: "select_account",
+    },
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID as string,
+      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
+    },
+  },
+  plugins: [
+    adminPlugin(),
+    emailOTP({
+      sendVerificationOnSignUp: true,
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type === "sign-in") {
+          await sendOTPEmail(email, otp, "sign-in");
+        } else if (type === "email-verification") {
+          // Send the OTP for email verification
+          await sendOTPEmail(email, otp, "email-verification");
+        } else {
+          // Send the OTP for password reset
+          await sendOTPEmail(email, otp, "other");
+        }
+      },
+    }),
+  ],
 });
