@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { TwoFactorVerify } from "./two-factor-verify";
 
 const formSchema = z.object({
   email: z.email("Invalid email address"),
@@ -26,6 +27,7 @@ type FormSchemaType = z.infer<typeof formSchema>;
 export const SigninForm = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [requires2FA, setRequires2FA] = useState(false);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -44,18 +46,29 @@ export const SigninForm = () => {
           password: data.password,
         },
         {
-          onSuccess: () => {
+          onSuccess: (context) => {
+            if (context.data.twoFactorRedirect) {
+              setRequires2FA(true);
+              setIsSubmitting(false);
+              return;
+            }
             toast.success("Sign-in successful! Redirecting...");
             router.push("/");
           },
-          onError: () => {
-            toast.error("Failed to sign in. Please try again.");
+          onError: (context) => {
+            toast.error(
+              context.error.message || "Failed to sign in. Please try again.",
+            );
           },
         },
       );
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (requires2FA) {
+    return <TwoFactorVerify onBack={() => setRequires2FA(false)} />;
   }
 
   return (

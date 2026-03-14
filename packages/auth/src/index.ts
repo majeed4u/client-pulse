@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin as adminPlugin, emailOTP } from "better-auth/plugins";
 import { sendOTPEmail } from "./lib/mailer";
+import { twoFactor } from "better-auth/plugins";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -36,6 +37,7 @@ export const auth = betterAuth({
       httpOnly: true,
     },
   },
+  appName: "Client Pulse",
   plugins: [
     adminPlugin(),
     emailOTP({
@@ -52,5 +54,6 @@ export const auth = betterAuth({
         }
       },
     }),
+    twoFactor(),
   ],
 });
