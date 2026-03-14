@@ -1,14 +1,22 @@
-import { protectedProcedure, publicProcedure, router } from "../index";
+import { router } from "../index";
+import { clientsRouter } from "./clients";
+import { deliverablesRouter } from "./deliverables";
+import { feedbackRouter } from "./feedback";
+import { invoicesRouter } from "./invoices";
+import { notificationsRouter } from "./notifications";
+import { projectsRouter } from "./projects";
+import { teamRouter } from "./team";
+import { workspaceRouter } from "./workspace";
 
 export const appRouter = router({
-	healthCheck: publicProcedure.query(() => {
-		return "OK";
-	}),
-	privateData: protectedProcedure.query(({ ctx }) => {
-		return {
-			message: "This is private",
-			user: ctx.session.user,
-		};
-	}),
+	workspace: workspaceRouter,
+	clients: clientsRouter,
+	projects: projectsRouter,
+	deliverables: deliverablesRouter,
+	feedback: feedbackRouter,
+	invoices: invoicesRouter,
+	team: teamRouter,
+	notifications: notificationsRouter,
 });
+
 export type AppRouter = typeof appRouter;
