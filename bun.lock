@@ -53,6 +53,7 @@
       "name": "web",
       "version": "0.1.0",
       "dependencies": {
+        "@better-fetch/fetch": "^1.1.21",
         "@client-pulse/api": "workspace:*",
         "@client-pulse/auth": "workspace:*",
         "@client-pulse/env": "workspace:*",
