@@ -8,6 +8,7 @@
 		"start": "next start --port 3001"
 	},
 	"dependencies": {
+		"@better-fetch/fetch": "^1.1.21",
 		"@client-pulse/api": "workspace:*",
 		"@client-pulse/auth": "workspace:*",
 		"@client-pulse/env": "workspace:*",
