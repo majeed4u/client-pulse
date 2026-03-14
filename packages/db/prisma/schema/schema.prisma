@@ -8,3 +8,272 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ─── MULTI-TENANCY ────────────────────────────────────────────────────────────
+
+model Workspace {
+  id                   String    @id @default(cuid())
+  name                 String
+  slug                 String    @unique
+  logoUrl              String?
+  plan                 Plan      @default(FREE)
+  defaultCurrency      String    @default("USD")
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  members       WorkspaceMember[]
+  projects      Project[]
+  clients       Client[]
+  invoices      Invoice[]
+  notifications NotificationPreference?
+}
+
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole @default(MEMBER)
+  createdAt   DateTime      @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+// ─── CLIENTS ──────────────────────────────────────────────────────────────────
+
+model Client {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  email       String
+  company     String?
+  phone       String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  projects  Project[]
+  invoices  Invoice[]
+
+  @@unique([workspaceId, email])
+  @@index([workspaceId])
+}
+
+// ─── PROJECTS ─────────────────────────────────────────────────────────────────
+
+model Project {
+  id            String        @id @default(cuid())
+  workspaceId   String
+  clientId      String
+  name          String
+  description   String?
+  status        ProjectStatus @default(ACTIVE)
+  portalToken   String        @unique @default(cuid())
+  portalEnabled Boolean       @default(true)
+  deadline      DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  workspace    Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  client       Client           @relation(fields: [clientId], references: [id])
+  deliverables Deliverable[]
+  feedback     FeedbackThread[]
+  invoices     Invoice[]
+  activities   Activity[]
+
+  @@index([workspaceId])
+  @@index([portalToken])
+}
+
+// ─── DELIVERABLES ─────────────────────────────────────────────────────────────
+
+model Deliverable {
+  id          String            @id @default(cuid())
+  projectId   String
+  name        String
+  description String?
+  status      DeliverableStatus @default(PENDING_REVIEW)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  project  Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  versions DeliverableVersion[]
+
+  @@index([projectId])
+}
+
+model DeliverableVersion {
+  id            String    @id @default(cuid())
+  deliverableId String
+  versionNumber Int
+  fileUrl       String
+  fileKey       String
+  fileName      String
+  fileSize      Int
+  mimeType      String
+  uploadedAt    DateTime  @default(now())
+  approvedAt    DateTime?
+  rejectedAt    DateTime?
+  clientNote    String?
+
+  deliverable Deliverable @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+
+  @@unique([deliverableId, versionNumber])
+  @@index([deliverableId])
+}
+
+// ─── FEEDBACK ─────────────────────────────────────────────────────────────────
+
+model FeedbackThread {
+  id        String         @id @default(cuid())
+  projectId String
+  title     String
+  status    FeedbackStatus @default(OPEN)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  project  Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages FeedbackMessage[]
+
+  @@index([projectId])
+}
+
+model FeedbackMessage {
+  id          String     @id @default(cuid())
+  threadId    String
+  authorName  String
+  authorType  AuthorType
+  body        String
+  attachments String[]
+  createdAt   DateTime   @default(now())
+
+  thread FeedbackThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+}
+
+// ─── INVOICES ─────────────────────────────────────────────────────────────────
+
+model Invoice {
+  id                    String        @id @default(cuid())
+  workspaceId           String
+  clientId              String
+  projectId             String?
+  invoiceNumber         String
+  status                InvoiceStatus @default(DRAFT)
+  currency              String        @default("USD")
+  lineItems             Json
+  subtotal              Int
+  taxPercent            Float         @default(0)
+  taxAmount             Int           @default(0)
+  total                 Int
+  dueDate               DateTime?
+  paidAt                DateTime?
+  notes                 String?
+  stripePaymentLinkId   String?
+  stripePaymentLinkUrl  String?
+  stripePaymentIntentId String?
+  pdfKey                String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  client    Client    @relation(fields: [clientId], references: [id])
+  project   Project?  @relation(fields: [projectId], references: [id])
+
+  @@index([workspaceId])
+  @@index([clientId])
+}
+
+// ─── ACTIVITY LOG ─────────────────────────────────────────────────────────────
+
+model Activity {
+  id        String       @id @default(cuid())
+  projectId String
+  type      ActivityType
+  actorName String
+  actorType AuthorType
+  metadata  Json?
+  createdAt DateTime     @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+
+model NotificationPreference {
+  id            String  @id @default(cuid())
+  workspaceId   String  @unique
+  onApproval    Boolean @default(true)
+  onRejection   Boolean @default(true)
+  onFeedback    Boolean @default(true)
+  onInvoicePaid Boolean @default(true)
+  emailEnabled  Boolean @default(true)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
+
+enum Plan {
+  FREE
+  PRO
+  AGENCY
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+  ON_HOLD
+}
+
+enum DeliverableStatus {
+  PENDING_REVIEW
+  APPROVED
+  CHANGES_REQUESTED
+  SUPERSEDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum FeedbackStatus {
+  OPEN
+  RESOLVED
+}
+
+enum AuthorType {
+  FREELANCER
+  CLIENT
+}
+
+enum ActivityType {
+  PROJECT_CREATED
+  DELIVERABLE_UPLOADED
+  DELIVERABLE_APPROVED
+  DELIVERABLE_REJECTED
+  FEEDBACK_LEFT
+  INVOICE_SENT
+  INVOICE_PAID
+  CLIENT_VIEWED_PORTAL
+}
