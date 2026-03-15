@@ -316,5 +316,48 @@
     "sent": "تم إرسال الفاتورة",
     "markedPaid": "تم تحديد الفاتورة كمدفوعة",
     "cancelled": "تم إلغاء الفاتورة"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "description": "إدارة إعدادات مساحة العمل",
+    "workspaceTitle": "مساحة العمل",
+    "workspaceDescription": "تحديث اسم مساحة العمل والرابط والعملة الافتراضية",
+    "nameLabel": "اسم مساحة العمل",
+    "slugLabel": "رابط مساحة العمل",
+    "slugHint": "أحرف صغيرة وأرقام وشرطات فقط.",
+    "currencyLabel": "العملة الافتراضية",
+    "saveChanges": "حفظ التغييرات",
+    "saved": "تم حفظ الإعدادات",
+    "planTitle": "الخطة",
+    "planDescription": "خطة اشتراكك الحالية",
+    "plan": "الخطة",
+    "freePlanHint": "قم بالترقية إلى Pro أو Agency لفتح المزيد من الميزات",
+    "paidPlanHint": "لديك وصول إلى جميع الميزات",
+    "upgradePlan": "ترقية الخطة",
+    "dangerZone": "منطقة الخطر",
+    "dangerZoneDescription": "إجراءات لا يمكن التراجع عنها لمساحة العمل",
+    "dangerZoneHint": "بمجرد حذف مساحة العمل، ستُفقد جميع البيانات نهائياً.",
+    "deleteWorkspace": "حذف مساحة العمل"
+  },
+  "team": {
+    "title": "الفريق",
+    "description": "إدارة أعضاء فريقك وأدوارهم",
+    "membersTitle": "الأعضاء",
+    "membersCount": "{count} عضو",
+    "noMembers": "لا يوجد أعضاء في الفريق بعد",
+    "joined": "انضم",
+    "role": {
+      "OWNER": "المالك",
+      "ADMIN": "مشرف",
+      "MEMBER": "عضو"
+    },
+    "promoteToAdmin": "ترقية إلى مشرف",
+    "demoteToMember": "تخفيض إلى عضو",
+    "removeMember": "إزالة العضو",
+    "memberRemoved": "تم إزالة العضو",
+    "roleUpdated": "تم تحديث الدور",
+    "agencyOnly": "إدارة الفريق تتطلب خطة Agency",
+    "agencyOnlyDescription": "قم بالترقية إلى Agency لدعوة أعضاء الفريق وإدارة الأدوار.",
+    "upgradeForTeam": "الترقية إلى Agency"
   }
 }

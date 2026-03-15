@@ -316,5 +316,48 @@
     "sent": "Invoice sent",
     "markedPaid": "Invoice marked as paid",
     "cancelled": "Invoice cancelled"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your workspace settings",
+    "workspaceTitle": "Workspace",
+    "workspaceDescription": "Update your workspace name, URL and default currency",
+    "nameLabel": "Workspace name",
+    "slugLabel": "Workspace URL",
+    "slugHint": "Lowercase letters, numbers, and hyphens only.",
+    "currencyLabel": "Default currency",
+    "saveChanges": "Save changes",
+    "saved": "Settings saved",
+    "planTitle": "Plan",
+    "planDescription": "Your current subscription plan",
+    "plan": "Plan",
+    "freePlanHint": "Upgrade to Pro or Agency to unlock more features",
+    "paidPlanHint": "You have access to all features",
+    "upgradePlan": "Upgrade plan",
+    "dangerZone": "Danger zone",
+    "dangerZoneDescription": "Irreversible actions for your workspace",
+    "dangerZoneHint": "Once you delete your workspace, all data will be permanently lost.",
+    "deleteWorkspace": "Delete workspace"
+  },
+  "team": {
+    "title": "Team",
+    "description": "Manage your team members and their roles",
+    "membersTitle": "Members",
+    "membersCount": "{count, plural, one {# member} other {# members}}",
+    "noMembers": "No team members yet",
+    "joined": "Joined",
+    "role": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "MEMBER": "Member"
+    },
+    "promoteToAdmin": "Promote to admin",
+    "demoteToMember": "Demote to member",
+    "removeMember": "Remove member",
+    "memberRemoved": "Member removed",
+    "roleUpdated": "Role updated",
+    "agencyOnly": "Team management requires Agency plan",
+    "agencyOnlyDescription": "Upgrade to Agency to invite team members and manage roles.",
+    "upgradeForTeam": "Upgrade to Agency"
   }
 }
