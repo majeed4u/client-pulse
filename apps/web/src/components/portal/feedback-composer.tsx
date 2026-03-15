@@ -6,6 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface FeedbackComposerProps {
 	thread: {
@@ -33,6 +34,7 @@ export function FeedbackComposer({
 }: FeedbackComposerProps) {
 	const [message, setMessage] = useState("");
 	const [sending, setSending] = useState(false);
+	const t = useTranslations("portal");
 
 	const sendMessage = async () => {
 		if (!message.trim()) return;
@@ -64,7 +66,7 @@ export function FeedbackComposer({
 				<h3 className="font-medium text-sm">{thread.title}</h3>
 				{thread.status === "RESOLVED" && (
 					<span className="ml-auto text-muted-foreground text-xs">
-						Resolved
+						{t("resolved")}
 					</span>
 				)}
 			</div>
@@ -72,7 +74,7 @@ export function FeedbackComposer({
 			<div className="max-h-64 divide-y overflow-y-auto">
 				{thread.messages.length === 0 ? (
 					<p className="px-4 py-6 text-center text-muted-foreground text-sm">
-						No messages yet. Start the conversation.
+						{t("noMessages")}
 					</p>
 				) : (
 					thread.messages.map((msg) => (
@@ -102,7 +104,7 @@ export function FeedbackComposer({
 					<Textarea
 						value={message}
 						onChange={(e) => setMessage(e.target.value)}
-						placeholder="Write a message…"
+					placeholder={t("writeMessage")}
 						rows={2}
 						className="resize-none"
 						onKeyDown={(e) => {

@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface ClientFormProps {
   mode: "create" | "edit";
@@ -27,6 +28,8 @@ interface ClientFormProps {
 export function ClientForm({ mode, initialData, onSuccess }: ClientFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("clients");
+  const tCommon = useTranslations("common");
 
   const [name, setName] = useState(initialData?.name ?? "");
   const [email, setEmail] = useState(initialData?.email ?? "");
@@ -85,52 +88,52 @@ export function ClientForm({ mode, initialData, onSuccess }: ClientFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="name">Full name *</Label>
+          <Label htmlFor="name">{t("nameLabel")} *</Label>
           <Input
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Jane Smith"
+            placeholder={t("namePlaceholder")}
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Email *</Label>
+          <Label htmlFor="email">{t("emailLabel")} *</Label>
           <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="jane@company.com"
+            placeholder={t("emailPlaceholder")}
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="company">Company</Label>
+          <Label htmlFor="company">{t("companyLabel")}</Label>
           <Input
             id="company"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            placeholder="Acme Inc."
+            placeholder={t("companyPlaceholder")}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone</Label>
+          <Label htmlFor="phone">{t("phoneLabel")}</Label>
           <Input
             id="phone"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="+1 555 000 0000"
+            placeholder={t("phonePlaceholder")}
           />
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="notes">Notes</Label>
+        <Label htmlFor="notes">{t("notesLabel")}</Label>
         <Textarea
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Any internal notes about this client…"
+          placeholder={t("notesPlaceholder")}
           rows={3}
         />
       </div>
@@ -141,11 +144,11 @@ export function ClientForm({ mode, initialData, onSuccess }: ClientFormProps) {
           onClick={() => onSuccess?.()}
           disabled={isPending}
         >
-          Cancel
+          {tCommon("cancel")}
         </Button>
         <Button type="submit" disabled={isPending}>
           {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {mode === "create" ? "Add client" : "Save changes"}
+          {mode === "create" ? t("createClient") : tCommon("save")}
         </Button>
       </div>
     </form>

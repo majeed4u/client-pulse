@@ -32,6 +32,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 const STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-green-500/10 text-green-700 border-green-200",
@@ -57,6 +58,10 @@ export default function ClientDetailPage({
   const router = useRouter();
   const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
+  const t = useTranslations("clients");
+  const tCommon = useTranslations("common");
+  const tProjects = useTranslations("projects");
+  const tDashboard = useTranslations("dashboard");
 
   const { data: client, isLoading } = useQuery(
     trpc.clients.get.queryOptions({ id: params.id }),
@@ -74,7 +79,7 @@ export default function ClientDetailPage({
   );
 
   const handleDelete = () => {
-    if (confirm("Delete this client? This cannot be undone.")) {
+    if (confirm(t("deleteConfirm"))) {
       deleteMutation.mutate({ id: params.id });
     }
   };
@@ -92,15 +97,21 @@ export default function ClientDetailPage({
   if (!client) {
     return (
       <div className="p-6 flex flex-col items-center justify-center py-24 gap-3">
-        <p className="text-lg font-medium">Client not found</p>
-        <Button variant="outline" render={<Link href={"/dashboard/clients" as any} />}>
-          Back to clients
+        <p className="text-lg font-medium">{t("notFound")}</p>
+        <Button
+          variant="outline"
+          render={<Link href={"/dashboard/clients" as any} />}
+        >
+          {t("backToClients")}
         </Button>
       </div>
     );
   }
 
-  const totalInvoiced = client.invoices.reduce((sum, inv) => sum + inv.total, 0);
+  const totalInvoiced = client.invoices.reduce(
+    (sum, inv) => sum + inv.total,
+    0,
+  );
   const totalPaid = client.invoices
     .filter((inv) => inv.status === "PAID")
     .reduce((sum, inv) => sum + inv.total, 0);
@@ -110,7 +121,11 @@ export default function ClientDetailPage({
       {/* Back + header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" render={<Link href={"/dashboard/clients" as any} />}>
+          <Button
+            variant="ghost"
+            size="icon"
+            render={<Link href={"/dashboard/clients" as any} />}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
@@ -123,7 +138,7 @@ export default function ClientDetailPage({
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
             <Pencil className="mr-2 h-3.5 w-3.5" />
-            Edit
+            {tCommon("edit")}
           </Button>
           <Button
             variant="destructive"
@@ -132,7 +147,7 @@ export default function ClientDetailPage({
             disabled={deleteMutation.isPending}
           >
             <Trash2 className="mr-2 h-3.5 w-3.5" />
-            Delete
+            {tCommon("delete")}
           </Button>
         </div>
       </div>
@@ -141,7 +156,9 @@ export default function ClientDetailPage({
         {/* Contact info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Contact info</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("contactInfo")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
@@ -170,13 +187,15 @@ export default function ClientDetailPage({
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Total invoiced</span>
+              <span className="text-muted-foreground">
+                {t("totalInvoiced")}
+              </span>
               <span className="font-medium">
                 ${(totalInvoiced / 100).toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Total paid</span>
+              <span className="text-muted-foreground">{t("totalPaid")}</span>
               <span className="font-medium text-green-600">
                 ${(totalPaid / 100).toFixed(2)}
               </span>
@@ -216,7 +235,11 @@ export default function ClientDetailPage({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Projects</CardTitle>
-          <Button variant="outline" size="sm" render={<Link href={"/dashboard/projects/new" as any} />}>
+          <Button
+            variant="outline"
+            size="sm"
+            render={<Link href={"/dashboard/projects/new" as any} />}
+          >
             New project
           </Button>
         </CardHeader>
@@ -238,7 +261,10 @@ export default function ClientDetailPage({
                     className={`text-xs ${STATUS_COLORS[project.status] ?? ""}`}
                     variant="outline"
                   >
-                    {project.status.replace("_", " ")}
+                    {project.status
+                      .split("_")
+                      .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+                      .join(" ")}
                   </Badge>
                 </Link>
               ))}
@@ -251,7 +277,11 @@ export default function ClientDetailPage({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Invoices</CardTitle>
-          <Button variant="outline" size="sm" render={<Link href={"/dashboard/invoices/new" as any} />}>
+          <Button
+            variant="outline"
+            size="sm"
+            render={<Link href={"/dashboard/invoices/new" as any} />}
+          >
             New invoice
           </Button>
         </CardHeader>

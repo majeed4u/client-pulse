@@ -6,6 +6,7 @@ import { Separator } from "@client-pulse/ui/components/separator";
 import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface InvoiceViewProps {
 	invoice: {
@@ -54,6 +55,7 @@ const STATUS_MAP: Record<
 
 export function InvoiceView({ invoice, token, serverUrl }: InvoiceViewProps) {
 	const [markingViewed, setMarkingViewed] = useState(false);
+	const t = useTranslations("portal");
 	const status = STATUS_MAP[invoice.status] ?? {
 		label: invoice.status,
 		variant: "secondary" as const,
@@ -90,7 +92,7 @@ export function InvoiceView({ invoice, token, serverUrl }: InvoiceViewProps) {
 							</p>
 						)}
 					</div>
-					<Badge variant={status.variant}>{status.label}</Badge>
+					<Badge variant={status.variant}>{t(`invoiceStatus.${invoice.status}` as any) ?? status.label}</Badge>
 				</div>
 
 				<Separator />
@@ -98,10 +100,10 @@ export function InvoiceView({ invoice, token, serverUrl }: InvoiceViewProps) {
 				{/* Line items */}
 				<div className="space-y-3">
 					<div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-						<span>Description</span>
-						<span className="text-right">Qty</span>
-						<span className="text-right">Unit Price</span>
-						<span className="text-right">Total</span>
+					<span>{t("description")}</span>
+					<span className="text-right">{t("qty")}</span>
+					<span className="text-right">{t("unitPrice")}</span>
+					<span className="text-right">{t("total")}</span>
 					</div>
 					{invoice.lineItems.map((item, i) => (
 						<div
@@ -130,17 +132,17 @@ export function InvoiceView({ invoice, token, serverUrl }: InvoiceViewProps) {
 				{/* Totals */}
 				<div className="space-y-2 text-sm">
 					<div className="flex justify-between text-muted-foreground">
-						<span>Subtotal</span>
+					<span>{t("subtotal")}</span>
 						<span>{formatCurrency(invoice.subtotal, invoice.currency)}</span>
 					</div>
 					{invoice.taxPercent > 0 && (
 						<div className="flex justify-between text-muted-foreground">
-							<span>Tax ({invoice.taxPercent}%)</span>
+						<span>{t("tax", { percent: invoice.taxPercent })}</span>
 							<span>{formatCurrency(invoice.taxAmount, invoice.currency)}</span>
 						</div>
 					)}
 					<div className="flex justify-between border-t pt-1 font-semibold text-base">
-						<span>Total</span>
+					<span>{t("total")}</span>
 						<span>{formatCurrency(invoice.total, invoice.currency)}</span>
 					</div>
 				</div>
@@ -163,13 +165,13 @@ export function InvoiceView({ invoice, token, serverUrl }: InvoiceViewProps) {
 							disabled={markingViewed}
 						>
 							<ExternalLink className="mr-2 h-4 w-4" />
-							Pay Now
+							{t("payNow")}
 						</Button>
 					)}
 
 				{invoice.status === "PAID" && (
 					<div className="rounded-md border border-green-200 bg-green-50 p-3 text-center font-medium text-green-700 text-sm dark:border-green-800 dark:bg-green-950 dark:text-green-300">
-						This invoice has been paid. Thank you!
+					{t("invoicePaid")}
 					</div>
 				)}
 			</div>

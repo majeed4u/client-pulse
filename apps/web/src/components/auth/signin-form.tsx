@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { TwoFactorVerify } from "./two-factor-verify";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
   email: z.email("Invalid email address"),
@@ -28,6 +29,7 @@ export const SigninForm = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requires2FA, setRequires2FA] = useState(false);
+  const t = useTranslations("auth");
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -84,7 +86,7 @@ export const SigninForm = () => {
                   {...field}
                   id={field.name}
                   aria-invalid={fieldState.invalid}
-                  placeholder="Enter your email address"
+                  placeholder={t("emailPlaceholder")}
                   autoComplete="email"
                   className=" py-6 rounded-md placeholder:text-sm text-base"
                 />
@@ -103,7 +105,7 @@ export const SigninForm = () => {
                   {...field}
                   id={field.name}
                   aria-invalid={fieldState.invalid}
-                  placeholder="Enter your password"
+                  placeholder={t("passwordPlaceholder")}
                   autoComplete="new-password"
                   className=" py-6 rounded-md placeholder:text-sm text-base"
                   type="password"
@@ -121,17 +123,17 @@ export const SigninForm = () => {
           className="w-full py-6 rounded-md text-sm font-serif font-semibold"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Signing In..." : "Sign In"}
+          {isSubmitting ? t("signingIn") : t("signIn")}
         </Button>
 
         <div>
           <p className="text-center text-sm text-muted-foreground">
-            Do not have an account?{" "}
+            {t("dontHaveAccount")}{" "}
             <Link
               href="/sign-up"
               className="text-primary underline-offset-4 hover:underline"
             >
-              Sign Up
+              {t("signUpLink")}
             </Link>
           </p>
         </div>

@@ -25,11 +25,13 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export default function ProjectSettingsPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("projects");
 
   const [confirmArchive, setConfirmArchive] = useState(false);
   const [confirmRegenerate, setConfirmRegenerate] = useState(false);
@@ -94,7 +96,7 @@ export default function ProjectSettingsPage() {
     return (
       <div className="p-6 flex flex-col items-center py-24 gap-3 text-center">
         <FileText className="h-10 w-10 text-muted-foreground/40" />
-        <p className="text-lg font-medium">Project not found</p>
+        <p className="text-lg font-medium">{t("notFound")}</p>
         <Button render={<Link href={"/dashboard/projects" as any} />}>
           Back to projects
         </Button>
@@ -114,7 +116,7 @@ export default function ProjectSettingsPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Project settings</h1>
+          <h1 className="text-2xl font-bold">{t("settingsTitle")}</h1>
           <p className="text-sm text-muted-foreground mt-1">{project.name}</p>
         </div>
       </div>
@@ -122,10 +124,8 @@ export default function ProjectSettingsPage() {
       {/* Edit form */}
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
-          <CardDescription>
-            Update the project name, description and deadline
-          </CardDescription>
+          <CardTitle>{t("settingsDetailsTitle")}</CardTitle>
+          <CardDescription>{t("settingsDetailsDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ProjectForm
@@ -144,28 +144,28 @@ export default function ProjectSettingsPage() {
       {/* Status + portal */}
       <Card>
         <CardHeader>
-          <CardTitle>Status & portal</CardTitle>
-          <CardDescription>
-            Control project status and client portal visibility
-          </CardDescription>
+          <CardTitle>{t("settingsStatusTitle")}</CardTitle>
+          <CardDescription>{t("settingsStatusDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Project status</Label>
+            <Label>{t("settingsProjectStatus")}</Label>
             <Select value={project.status} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ACTIVE">Active</SelectItem>
-                <SelectItem value="COMPLETED">Completed</SelectItem>
-                <SelectItem value="ON_HOLD">On hold</SelectItem>
+                <SelectItem value="ACTIVE">{t("status.ACTIVE")}</SelectItem>
+                <SelectItem value="COMPLETED">
+                  {t("status.COMPLETED")}
+                </SelectItem>
+                <SelectItem value="ON_HOLD">{t("status.ON_HOLD")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Client portal</Label>
+            <Label>{t("settingsPortalLabel")}</Label>
             <Select
               value={project.portalEnabled ? "true" : "false"}
               onValueChange={handlePortalToggle}
@@ -175,10 +175,10 @@ export default function ProjectSettingsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="true">
-                  Enabled — clients can view the portal
+                  {t("settingsPortalEnabled")}
                 </SelectItem>
                 <SelectItem value="false">
-                  Disabled — portal link shows an error
+                  {t("settingsPortalDisabled")}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -198,10 +198,11 @@ export default function ProjectSettingsPage() {
           {/* Regenerate portal token */}
           <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
             <div>
-              <p className="font-medium text-sm">Regenerate portal link</p>
+              <p className="font-medium text-sm">
+                {t("settingsRegenerateTitle")}
+              </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                This will invalidate the current client link. Share the new link
-                manually.
+                {t("settingsRegenerateDesc")}
               </p>
             </div>
             {confirmRegenerate ? (
@@ -213,14 +214,14 @@ export default function ProjectSettingsPage() {
                   disabled={regenerateMutation.isPending}
                 >
                   <RefreshCw className="mr-2 h-3.5 w-3.5" />
-                  Confirm
+                  {t("settingsConfirmAction")}
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => setConfirmRegenerate(false)}
                 >
-                  Cancel
+                  {t("settingsCancel")}
                 </Button>
               </div>
             ) : (
@@ -230,7 +231,7 @@ export default function ProjectSettingsPage() {
                 onClick={() => setConfirmRegenerate(true)}
                 className="shrink-0"
               >
-                Regenerate
+                {t("settingsRegenerate")}
               </Button>
             )}
           </div>
@@ -239,10 +240,11 @@ export default function ProjectSettingsPage() {
           {project.status !== "ARCHIVED" && (
             <div className="flex items-start justify-between gap-4 rounded-lg border border-destructive/30 p-4">
               <div>
-                <p className="font-medium text-sm">Archive project</p>
+                <p className="font-medium text-sm">
+                  {t("settingsArchiveTitle")}
+                </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  The project will be hidden from the active list. This can be
-                  undone via the status selector.
+                  {t("settingsArchiveDesc")}
                 </p>
               </div>
               {confirmArchive ? (
@@ -253,14 +255,14 @@ export default function ProjectSettingsPage() {
                     onClick={() => archiveMutation.mutate({ id })}
                     disabled={archiveMutation.isPending}
                   >
-                    Archive
+                    {t("settingsArchiveAction")}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => setConfirmArchive(false)}
                   >
-                    Cancel
+                    {t("settingsCancel")}
                   </Button>
                 </div>
               ) : (
@@ -270,7 +272,7 @@ export default function ProjectSettingsPage() {
                   onClick={() => setConfirmArchive(true)}
                   className="shrink-0 text-destructive hover:text-destructive"
                 >
-                  Archive
+                  {t("settingsArchiveAction")}
                 </Button>
               )}
             </div>

@@ -5,6 +5,7 @@ import { ArrowLeft, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { FeedbackComposer } from "@/components/portal/feedback-composer";
 
 interface Thread {
@@ -30,6 +31,7 @@ export function FeedbackPageClient({
 	initialData: { threads: Thread[] };
 }) {
 	const [threads, setThreads] = useState<Thread[]>(initialData.threads ?? []);
+	const t = useTranslations("portal");
 
 	const refresh = useCallback(async () => {
 		try {
@@ -54,13 +56,13 @@ export function FeedbackPageClient({
 					</Link>
 					<div className="flex items-center gap-2">
 						<MessageSquare className="h-5 w-5 text-muted-foreground" />
-						<h1 className="font-semibold text-lg">Feedback</h1>
+					<h1 className="font-semibold text-lg">{t("feedback")}</h1>
 					</div>
 				</div>
 
 				{threads.length === 0 ? (
 					<p className="py-8 text-center text-muted-foreground text-sm">
-						No feedback threads yet.
+						{t("noFeedback")}
 					</p>
 				) : (
 					<div className="space-y-4">

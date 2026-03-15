@@ -4,6 +4,7 @@ import { Button } from "@client-pulse/ui/components/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { InvoiceView } from "@/components/portal/invoice-view";
+import { useTranslations } from "next-intl";
 
 interface Invoice {
 	id: string;
@@ -33,6 +34,7 @@ export function InvoicePageClient({
 	serverUrl: string;
 	invoice: Invoice;
 }) {
+	const t = useTranslations("portal");
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="mx-auto max-w-3xl px-4 py-8">
@@ -43,7 +45,7 @@ export function InvoicePageClient({
 						</Button>
 					</Link>
 					<h1 className="font-semibold text-lg">
-						Invoice {invoice.invoiceNumber}
+						{t("invoiceTitle", { number: invoice.invoiceNumber })}
 					</h1>
 				</div>
 

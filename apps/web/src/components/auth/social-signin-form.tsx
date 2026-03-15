@@ -5,8 +5,10 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 import { env } from "@client-pulse/env/web";
+import { useTranslations } from "next-intl";
 
 export const SocialSignInForm = () => {
+  const t = useTranslations("auth");
   async function handleSocialSignIn(provider: "google" | "microsoft") {
     await authClient.signIn.social(
       { provider, callbackURL: env.NEXT_PUBLIC_WEB_URL },
@@ -38,7 +40,7 @@ export const SocialSignInForm = () => {
             width={18}
             height={18}
           />
-          Continue with Google
+          {t("continueWithGoogle")}
         </Button>
         <Button
           type="button"
@@ -52,7 +54,7 @@ export const SocialSignInForm = () => {
             width={18}
             height={18}
           />
-          Continue with Microsoft
+          {t("continueWithMicrosoft")}
         </Button>
       </div>
     </div>

@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 function StatCard({
   title,
@@ -80,6 +81,8 @@ export default function DashboardPage() {
   const projectsQuery = useQuery(trpc.projects.list.queryOptions({ limit: 5 }));
   const clientsQuery = useQuery(trpc.clients.list.queryOptions({}));
   const invoicesQuery = useQuery(trpc.invoices.list.queryOptions({}));
+  const t = useTranslations("dashboard");
+  const tProjects = useTranslations("projects");
 
   const projects = projectsQuery.data?.projects ?? [];
   const clients = clientsQuery.data?.clients ?? [];
@@ -113,7 +116,7 @@ export default function DashboardPage() {
         <Link href="/dashboard/projects/new">
           <Button size="sm" className="gap-2">
             <Plus className="h-4 w-4" />
-            New Project
+            {t("newProject")}
           </Button>
         </Link>
       </div>
@@ -121,27 +124,27 @@ export default function DashboardPage() {
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Active Projects"
+          title={t("activeProjects")}
           value={activeProjects}
           icon={FolderKanban}
           description={`${projects.length} total`}
           loading={loading}
         />
         <StatCard
-          title="Clients"
+          title={t("totalClients")}
           value={totalClients}
           icon={Users}
           loading={loading}
         />
         <StatCard
-          title="Pending Revenue"
+          title={t("pendingRevenue")}
           value={`$${(pendingAmount / 100).toLocaleString()}`}
           icon={Clock}
           description={`${pendingInvoices.length} unpaid invoices`}
           loading={loading}
         />
         <StatCard
-          title="Total Earned"
+          title={t("paidRevenue")}
           value={`$${(paidAmount / 100).toLocaleString()}`}
           icon={DollarSign}
           description="All time paid"
@@ -154,11 +157,11 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-base font-semibold">
-              Recent Projects
+              {t("recentProjects")}
             </CardTitle>
             <Link href="/dashboard/projects">
               <Button variant="ghost" size="sm" className="gap-1 text-xs">
-                View all <ArrowRight className="h-3 w-3" />
+                {t("viewAll")} <ArrowRight className="h-3 w-3" />
               </Button>
             </Link>
           </CardHeader>
@@ -170,7 +173,9 @@ export default function DashboardPage() {
             ) : projects.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <FolderKanban className="mb-2 h-8 w-8 text-muted-foreground/40" />
-                <p className="text-sm text-muted-foreground">No projects yet</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("noProjects")}
+                </p>
                 <Link href="/dashboard/projects/new" className="mt-2">
                   <Button variant="outline" size="sm">
                     Create your first project
@@ -196,7 +201,10 @@ export default function DashboardPage() {
                     variant="outline"
                     className={`ml-3 shrink-0 text-[10px] ${statusColors[project.status] ?? ""}`}
                   >
-                    {project.status.replace("_", " ")}
+                    {project.status
+                      .split("_")
+                      .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+                      .join(" ")}
                   </Badge>
                 </Link>
               ))
@@ -208,11 +216,11 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-base font-semibold">
-              Recent Invoices
+              {t("recentInvoices")}
             </CardTitle>
             <Link href="/dashboard/invoices">
               <Button variant="ghost" size="sm" className="gap-1 text-xs">
-                View all <ArrowRight className="h-3 w-3" />
+                {t("viewAll")} <ArrowRight className="h-3 w-3" />
               </Button>
             </Link>
           </CardHeader>
@@ -224,7 +232,9 @@ export default function DashboardPage() {
             ) : invoices.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <DollarSign className="mb-2 h-8 w-8 text-muted-foreground/40" />
-                <p className="text-sm text-muted-foreground">No invoices yet</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("noInvoices")}
+                </p>
                 <Link href="/dashboard/invoices/new" className="mt-2">
                   <Button variant="outline" size="sm">
                     Create your first invoice
@@ -262,7 +272,7 @@ export default function DashboardPage() {
                               : "border-gray-200 text-gray-500"
                       }`}
                     >
-                      {invoice.status}
+                      {t(`invoiceStatus.${invoice.status}` as any)}
                     </Badge>
                   </div>
                 </Link>

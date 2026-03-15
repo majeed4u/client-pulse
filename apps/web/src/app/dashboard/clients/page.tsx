@@ -15,12 +15,17 @@ import { Skeleton } from "@client-pulse/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Search, Users } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function ClientsPage() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const t = useTranslations("clients");
+  const tCommon = useTranslations("common");
 
-  const { data: clients, isLoading } = useQuery(trpc.clients.list.queryOptions());
+  const { data: clients, isLoading } = useQuery(
+    trpc.clients.list.queryOptions(),
+  );
 
   const filtered = clients?.filter(
     (c) =>
@@ -34,14 +39,14 @@ export default function ClientsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Clients</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage your clients and their projects
+            {t("description")}
           </p>
         </div>
         <Button onClick={() => setOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add client
+          {t("addClient")}
         </Button>
       </div>
 
@@ -49,7 +54,7 @@ export default function ClientsPage() {
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search clients…"
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9"
@@ -66,13 +71,13 @@ export default function ClientsPage() {
       ) : filtered?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
           <Users className="h-10 w-10 text-muted-foreground/40" />
-          <p className="text-lg font-medium">No clients yet</p>
+          <p className="text-lg font-medium">{t("noClients")}</p>
           <p className="text-sm text-muted-foreground">
-            Add your first client to get started
+            {t("noClientsDescription")}
           </p>
           <Button onClick={() => setOpen(true)} className="mt-2">
             <Plus className="mr-2 h-4 w-4" />
-            Add client
+            {t("addClient")}
           </Button>
         </div>
       ) : (
@@ -87,7 +92,7 @@ export default function ClientsPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add client</DialogTitle>
+            <DialogTitle>{t("addClient")}</DialogTitle>
           </DialogHeader>
           <ClientForm mode="create" onSuccess={() => setOpen(false)} />
         </DialogContent>

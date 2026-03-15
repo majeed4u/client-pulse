@@ -1,6 +1,9 @@
+"use client";
+
 import { format } from "date-fns";
 import { Calendar, Globe } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface PortalHeaderProps {
 	projectName: string;
@@ -11,11 +14,11 @@ interface PortalHeaderProps {
 	status: string;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-	ACTIVE: "Active",
-	COMPLETED: "Completed",
-	ON_HOLD: "On hold",
-	ARCHIVED: "Archived",
+const STATUS_STYLES: Record<string, string> = {
+	ACTIVE: "text-green-600",
+	COMPLETED: "text-blue-600",
+	ON_HOLD: "text-yellow-600",
+	ARCHIVED: "text-gray-500",
 };
 
 export function PortalHeader({
@@ -26,6 +29,7 @@ export function PortalHeader({
 	deadline,
 	status,
 }: PortalHeaderProps) {
+	const t = useTranslations("portal");
 	return (
 		<header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 			<div className="mx-auto max-w-4xl px-4 py-4">
@@ -54,16 +58,16 @@ export function PortalHeader({
 						{deadline && (
 							<span className="hidden items-center gap-1 sm:flex">
 								<Calendar className="h-3.5 w-3.5" />
-								Due {format(new Date(deadline), "MMM d, yyyy")}
+								{t("due")} {format(new Date(deadline), "MMM d, yyyy")}
 							</span>
 						)}
 						<span className="rounded-full bg-muted px-2 py-0.5 font-medium text-xs">
-							{STATUS_LABELS[status] ?? status}
+						{t(`status.${status}` as any) ?? status}
 						</span>
 					</div>
 				</div>
 				<p className="mt-1 text-muted-foreground text-sm">
-					Welcome, {clientName}
+					{t("welcome", { name: clientName })}
 				</p>
 			</div>
 		</header>

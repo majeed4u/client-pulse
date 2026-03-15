@@ -15,12 +15,14 @@ import { useQuery } from "@tanstack/react-query";
 import { FolderOpen, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 type StatusFilter = "ALL" | "ACTIVE" | "COMPLETED" | "ON_HOLD" | "ARCHIVED";
 
 export default function ProjectsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const t = useTranslations("projects");
 
   const { data: projects, isLoading } = useQuery(
     trpc.projects.list.queryOptions(
@@ -39,14 +41,14 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage your projects and client deliverables
+            {t("description")}
           </p>
         </div>
         <Button render={<Link href={"/dashboard/projects/new" as any} />}>
           <Plus className="mr-2 h-4 w-4" />
-          New project
+          {t("newProject")}
         </Button>
       </div>
 
@@ -55,7 +57,7 @@ export default function ProjectsPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search projects…"
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -68,11 +70,11 @@ export default function ProjectsPage() {
         onValueChange={(v) => setStatusFilter(v as StatusFilter)}
       >
         <TabsList>
-          <TabsTrigger value="ALL">All</TabsTrigger>
-          <TabsTrigger value="ACTIVE">Active</TabsTrigger>
-          <TabsTrigger value="COMPLETED">Completed</TabsTrigger>
-          <TabsTrigger value="ON_HOLD">On hold</TabsTrigger>
-          <TabsTrigger value="ARCHIVED">Archived</TabsTrigger>
+          <TabsTrigger value="ALL">{t("all")}</TabsTrigger>
+          <TabsTrigger value="ACTIVE">{t("active")}</TabsTrigger>
+          <TabsTrigger value="COMPLETED">{t("completed")}</TabsTrigger>
+          <TabsTrigger value="ON_HOLD">{t("onHold")}</TabsTrigger>
+          <TabsTrigger value="ARCHIVED">{t("archived")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value={statusFilter} className="mt-4">
@@ -85,11 +87,11 @@ export default function ProjectsPage() {
           ) : filtered?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
               <FolderOpen className="h-10 w-10 text-muted-foreground/40" />
-              <p className="text-lg font-medium">No projects found</p>
+              <p className="text-lg font-medium">{t("noProjects")}</p>
               <p className="text-sm text-muted-foreground">
                 {statusFilter === "ALL"
-                  ? "Create your first project to get started"
-                  : `No ${statusFilter.toLowerCase().replace("_", " ")} projects`}
+                  ? t("noProjectsDescription")
+                  : t(`status.${statusFilter}` as any)}
               </p>
               {statusFilter === "ALL" && (
                 <Button
@@ -97,7 +99,7 @@ export default function ProjectsPage() {
                   render={<Link href={"/dashboard/projects/new" as any} />}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  New project
+                  {t("newProject")}
                 </Button>
               )}
             </div>

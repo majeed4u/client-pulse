@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface DeliverableCardProps {
 	deliverable: {
@@ -88,6 +89,7 @@ export function DeliverableCard({
 }: DeliverableCardProps) {
 	const [rejectNote, setRejectNote] = useState("");
 	const [loading, setLoading] = useState(false);
+	const t = useTranslations("portal");
 
 	const latestVersion = deliverable.versions[0];
 	const status = deliverable.status as keyof typeof STATUS_CONFIG;
@@ -156,7 +158,7 @@ export function DeliverableCard({
 							)}
 						</div>
 						<span className={`shrink-0 font-medium text-xs ${config.color}`}>
-							{config.label}
+							{t(`deliverableStatus.${status}` as any)}
 						</span>
 					</div>
 
@@ -192,7 +194,7 @@ export function DeliverableCard({
 
 					{latestVersion?.clientNote && (
 						<p className="mt-2 text-muted-foreground text-sm italic">
-							Your note: {latestVersion.clientNote}
+							{t("yourNote")}: {latestVersion.clientNote}
 						</p>
 					)}
 
@@ -205,42 +207,34 @@ export function DeliverableCard({
 								className="bg-green-600 text-white hover:bg-green-700"
 							>
 								<CheckCircle2 className="mr-1.5 h-4 w-4" />
-								Approve
-							</Button>
-
-							<Dialog>
-								<DialogTrigger
-									render={
-										<Button variant="outline" size="sm" disabled={loading}>
-											<XCircle className="mr-1.5 h-4 w-4" />
-											Request changes
+							{t("approve")}
+										{t("requestChanges")}
 										</Button>
 									}
 								/>
 								<DialogContent>
 									<DialogHeader>
-										<DialogTitle>Request changes</DialogTitle>
+										<DialogTitle>{t("requestChangesTitle")}</DialogTitle>
 										<DialogDescription>
-											Let the team know what needs to be updated for &ldquo;
-											{deliverable.name}&rdquo;.
+											{t("requestChangesDesc", { name: deliverable.name })}
 										</DialogDescription>
 									</DialogHeader>
 									<div className="space-y-1.5">
-										<Label htmlFor="reject-note">Your feedback</Label>
+											<Label htmlFor="reject-note">{t("yourFeedback")}</Label>
 										<Textarea
 											id="reject-note"
 											value={rejectNote}
 											onChange={(e) => setRejectNote(e.target.value)}
-											placeholder="Describe what changes are needed…"
+												placeholder={t("feedbackPlaceholder")}
 											rows={4}
 										/>
 									</div>
 									<DialogFooter>
 										<DialogClose render={<Button variant="outline" />}>
-											Cancel
+											{t("cancel")}
 										</DialogClose>
 										<Button onClick={handleReject} disabled={loading}>
-											{loading ? "Sending…" : "Send feedback"}
+											{loading ? t("sending") : t("sendFeedback")}
 										</Button>
 									</DialogFooter>
 								</DialogContent>

@@ -1,1 +1,5 @@
 @import "@client-pulse/ui/globals.css";
+
+[dir="rtl"] {
+  font-family: var(--font-cairo), sans-serif;
+}

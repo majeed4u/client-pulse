@@ -1,12 +1,12 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@client-pulse/ui/components/avatar";
-import { Badge } from "@client-pulse/ui/components/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,33 +39,40 @@ import {
   Settings,
   Users,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-
-const navItems = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-    exact: true,
-  },
-  { label: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-  { label: "Clients", href: "/dashboard/clients", icon: Users },
-  { label: "Invoices", href: "/dashboard/invoices", icon: FileText },
-  {
-    label: "Analytics",
-    href: "/dashboard/analytics",
-    icon: BarChart3,
-    badge: "Soon",
-  },
-  { label: "Team", href: "/dashboard/team", icon: Building2, badge: "Agency" },
-];
 
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const user = session?.user;
+  const t = useTranslations("sidebar");
+
+  const navItems = [
+    {
+      key: "dashboard",
+      href: "/dashboard",
+      icon: LayoutDashboard,
+      exact: true,
+    },
+    { key: "projects", href: "/dashboard/projects", icon: FolderKanban },
+    { key: "clients", href: "/dashboard/clients", icon: Users },
+    { key: "invoices", href: "/dashboard/invoices", icon: FileText },
+    {
+      key: "analytics",
+      href: "/dashboard/analytics",
+      icon: BarChart3,
+      badge: t("soon"),
+    },
+    {
+      key: "team",
+      href: "/dashboard/team",
+      icon: Building2,
+      badge: t("agency"),
+    },
+  ] as const;
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
@@ -89,7 +96,7 @@ export function AppSidebar() {
                 <span className="text-sm font-bold">CP</span>
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
-                <span className="font-semibold">ClientPulse</span>
+                <span className="font-semibold">{t("brand")}</span>
                 <span className="text-xs text-muted-foreground">
                   Freelancer dashboard
                 </span>
@@ -107,17 +114,21 @@ export function AppSidebar() {
             <SidebarMenu>
               {navItems.map((item) => {
                 const Icon = item.icon;
+                const label = t(item.key);
                 return (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       render={<Link href={item.href as any} />}
-                      isActive={isActive(item.href, item.exact)}
-                      tooltip={item.label}
+                      isActive={isActive(
+                        item.href,
+                        "exact" in item ? item.exact : undefined,
+                      )}
+                      tooltip={label}
                     >
                       <Icon />
-                      <span>{item.label}</span>
+                      <span>{label}</span>
                     </SidebarMenuButton>
-                    {item.badge && (
+                    {"badge" in item && item.badge && (
                       <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
                     )}
                   </SidebarMenuItem>
@@ -134,10 +145,10 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   render={<Link href={"/dashboard/settings" as any} />}
                   isActive={pathname.startsWith("/dashboard/settings")}
-                  tooltip="Settings"
+                  tooltip={t("settings")}
                 >
                   <Settings />
-                  <span>Settings</span>
+                  <span>{t("settings")}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -147,6 +158,9 @@ export function AppSidebar() {
 
       {/* User footer */}
       <SidebarFooter>
+        <div className="px-2 pb-1">
+          <LocaleSwitcher />
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -182,7 +196,7 @@ export function AppSidebar() {
                   onClick={() => router.push("/dashboard/settings" as any)}
                 >
                   <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                  {t("settings")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -190,7 +204,7 @@ export function AppSidebar() {
                   className="text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  {t("signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -202,4 +216,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-

@@ -9,6 +9,7 @@ import {
 } from "@client-pulse/ui/components/card";
 import { Building2, FileText, FolderKanban, Mail, Phone } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface ClientCardProps {
   client: {
@@ -22,6 +23,7 @@ interface ClientCardProps {
 }
 
 export function ClientCard({ client }: ClientCardProps) {
+  const t = useTranslations("clients");
   return (
     <Link href={`/dashboard/clients/${client.id}` as any}>
       <Card className="hover:border-primary/50 cursor-pointer transition-colors">
@@ -55,13 +57,11 @@ export function ClientCard({ client }: ClientCardProps) {
           <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <FolderKanban className="h-3.5 w-3.5" />
-              {client._count.projects} project
-              {client._count.projects !== 1 ? "s" : ""}
+              {t("projectCount", { count: client._count.projects })}
             </span>
             <span className="flex items-center gap-1">
               <FileText className="h-3.5 w-3.5" />
-              {client._count.invoices} invoice
-              {client._count.invoices !== 1 ? "s" : ""}
+              {t("invoiceCount", { count: client._count.invoices })}
             </span>
           </div>
         </CardContent>

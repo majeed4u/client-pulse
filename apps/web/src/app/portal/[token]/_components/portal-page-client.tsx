@@ -6,6 +6,7 @@ import { CreditCard, FileText, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { DeliverableCard } from "@/components/portal/deliverable-card";
 import { FeedbackComposer } from "@/components/portal/feedback-composer";
 import { PortalHeader } from "@/components/portal/portal-header";
@@ -84,6 +85,7 @@ export function PortalPageClient({
 	initialData: PortalData;
 }) {
 	const [data, setData] = useState<PortalData>(initialData);
+	const t = useTranslations("portal");
 
 	const refresh = useCallback(async () => {
 		try {
@@ -139,17 +141,17 @@ export function PortalPageClient({
 				<section>
 					<div className="mb-4 flex items-center gap-2">
 						<FileText className="h-5 w-5 text-muted-foreground" />
-						<h2 className="font-semibold text-lg">Deliverables</h2>
+						<h2 className="font-semibold text-lg"{t("deliverables")}</h2>
 						{pendingDeliverables.length > 0 && (
 							<Badge variant="destructive" className="text-xs">
-								{pendingDeliverables.length} awaiting review
+								{t("awaitingReview", { count: pendingDeliverables.length })}
 							</Badge>
 						)}
 					</div>
 
 					{deliverables.length === 0 ? (
 						<p className="py-4 text-muted-foreground text-sm">
-							No deliverables have been uploaded yet.
+						{t("noDeliverables")}
 						</p>
 					) : (
 						<div className="space-y-3">
@@ -180,12 +182,12 @@ export function PortalPageClient({
 				<section>
 					<div className="mb-4 flex items-center gap-2">
 						<MessageSquare className="h-5 w-5 text-muted-foreground" />
-						<h2 className="font-semibold text-lg">Feedback</h2>
+				<h2 className="font-semibold text-lg">{t("feedback")}</h2>
 					</div>
 
 					{threads.length === 0 ? (
 						<p className="py-4 text-muted-foreground text-sm">
-							No feedback threads yet.
+							{t("noFeedback")}
 						</p>
 					) : (
 						<div className="space-y-4">
@@ -207,7 +209,7 @@ export function PortalPageClient({
 					<section>
 						<div className="mb-4 flex items-center gap-2">
 							<CreditCard className="h-5 w-5 text-muted-foreground" />
-							<h2 className="font-semibold text-lg">Invoices</h2>
+				<h2 className="font-semibold text-lg">{t("invoices")}</h2>
 						</div>
 
 						<div className="space-y-2">
@@ -226,7 +228,7 @@ export function PortalPageClient({
 											<p className="font-medium text-sm">{inv.invoiceNumber}</p>
 											{inv.dueDate && (
 												<p className="text-muted-foreground text-xs">
-													Due {format(new Date(inv.dueDate), "MMM d, yyyy")}
+													{t("due")} {format(new Date(inv.dueDate), "MMM d, yyyy")}
 												</p>
 											)}
 										</div>
@@ -234,7 +236,7 @@ export function PortalPageClient({
 											<span className="font-medium text-sm">
 												{formatCurrency(inv.total, inv.currency)}
 											</span>
-											<Badge variant={s.variant}>{s.label}</Badge>
+											<Badge variant={s.variant}>{t(`invoiceStatus.${inv.status}` as any) ?? s.label}</Badge>
 										</div>
 									</Link>
 								);

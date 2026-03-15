@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const formSchema = z
   .object({
@@ -43,6 +44,7 @@ export const SignupForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [otp, setOtp] = useState("");
   const isVerifyingRef = useRef(false);
+  const t = useTranslations("auth");
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -126,7 +128,7 @@ export const SignupForm = () => {
                     {...field}
                     id={field.name}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Enter your full name"
+                    placeholder={t("namePlaceholder")}
                     autoComplete="name"
                     className=" py-6 rounded-md placeholder:text-sm text-base"
                   />
@@ -145,7 +147,7 @@ export const SignupForm = () => {
                     {...field}
                     id={field.name}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Enter your email address"
+                    placeholder={t("emailPlaceholder")}
                     autoComplete="email"
                     className=" py-6 rounded-md placeholder:text-sm text-base"
                   />
@@ -167,7 +169,7 @@ export const SignupForm = () => {
                     placeholder="Enter your password"
                     autoComplete="new-password"
                     className=" py-6 rounded-md placeholder:text-sm text-base"
-                    type="password"
+                    placeholder={t("passwordPlaceholder")}
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
@@ -184,7 +186,7 @@ export const SignupForm = () => {
                     {...field}
                     id={field.name}
                     aria-invalid={fieldState.invalid}
-                    placeholder="Confirm your password"
+                    placeholder={t("passwordPlaceholder")}
                     autoComplete="current-password"
                     className=" py-6 rounded-md placeholder:text-sm text-base"
                     type="password"
@@ -202,7 +204,7 @@ export const SignupForm = () => {
             className="w-full py-6 rounded-md text-sm font-serif font-semibold"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Sending..." : "Sign Up"}
+            {isSubmitting ? t("signingUp") : t("signUp")}
           </Button>
 
           <div>
@@ -212,7 +214,7 @@ export const SignupForm = () => {
                 href="/sign-in"
                 className="text-primary underline-offset-4 hover:underline"
               >
-                Sign In
+                {t("signInLink")}
               </Link>
             </p>
           </div>
