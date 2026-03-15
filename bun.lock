@@ -28,6 +28,7 @@
         "@client-pulse/api": "workspace:*",
         "@client-pulse/auth": "workspace:*",
         "@client-pulse/db": "workspace:*",
+        "@client-pulse/email-templates": "workspace:*",
         "@client-pulse/env": "workspace:*",
         "@hono/node-server": "^1.14.4",
         "@hono/trpc-server": "^0.4.0",
@@ -146,6 +147,18 @@
         "@client-pulse/config": "workspace:*",
         "@types/pg": "^8.16.0",
         "prisma": "^7.2.0",
+        "typescript": "^5",
+      },
+    },
+    "packages/email-templates": {
+      "name": "@client-pulse/email-templates",
+      "dependencies": {
+        "@react-email/components": "^1.0.9",
+        "react": "catalog:",
+      },
+      "devDependencies": {
+        "@client-pulse/config": "workspace:*",
+        "@types/react": "catalog:",
         "typescript": "^5",
       },
     },
@@ -420,6 +433,8 @@
     "@client-pulse/config": ["@client-pulse/config@workspace:packages/config"],
 
     "@client-pulse/db": ["@client-pulse/db@workspace:packages/db"],
+
+    "@client-pulse/email-templates": ["@client-pulse/email-templates@workspace:packages/email-templates"],
 
     "@client-pulse/env": ["@client-pulse/env@workspace:packages/env"],
 

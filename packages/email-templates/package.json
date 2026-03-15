@@ -1,0 +1,24 @@
+{
+  "name": "@client-pulse/email-templates",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.tsx"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-email/components": "^1.0.9",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@client-pulse/config": "workspace:*",
+    "@types/react": "catalog:",
+    "typescript": "^5"
+  }
+}
