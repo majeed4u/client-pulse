@@ -98,9 +98,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("subtitle")}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Link href="/dashboard/projects/new">
           <Button size="sm" className="gap-2">
