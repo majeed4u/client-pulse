@@ -359,5 +359,25 @@
     "agencyOnly": "Team management requires Agency plan",
     "agencyOnlyDescription": "Upgrade to Agency to invite team members and manage roles.",
     "upgradeForTeam": "Upgrade to Agency"
+  },
+  "upgradeModal": {
+    "title": "Upgrade your plan",
+    "description": "Unlock powerful features to grow your freelance business.",
+    "descriptionFeature": "Upgrade your plan to access {feature}.",
+    "upgradeToPro": "Upgrade to Pro",
+    "upgradeToAgency": "Upgrade to Agency",
+    "maybeLater": "Maybe later",
+    "popular": "Most popular",
+    "upgradeFeature": {
+      "unlimitedProjects": "Unlimited projects",
+      "invoicePayments": "Invoice payments via Stripe",
+      "versionHistory": "Deliverable version history",
+      "customBranding": "Custom branding on portal",
+      "pdfExport": "PDF & CSV export",
+      "fileSizePro": "Up to 100 MB file uploads",
+      "everything": "Everything in Pro",
+      "teamMembers": "Up to 10 team members",
+      "fileSizeAgency": "Up to 500 MB file uploads"
+    }
   }
 }

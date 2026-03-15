@@ -359,5 +359,25 @@
     "agencyOnly": "إدارة الفريق تتطلب خطة Agency",
     "agencyOnlyDescription": "قم بالترقية إلى Agency لدعوة أعضاء الفريق وإدارة الأدوار.",
     "upgradeForTeam": "الترقية إلى Agency"
+  },
+  "upgradeModal": {
+    "title": "ترقية خطتك",
+    "description": "افتح ميزات قوية لتنمية أعمالك الحرة.",
+    "descriptionFeature": "قم بالترقية للوصول إلى {feature}.",
+    "upgradeToPro": "الترقية إلى Pro",
+    "upgradeToAgency": "الترقية إلى Agency",
+    "maybeLater": "ربما لاحقاً",
+    "popular": "الأكثر شيوعاً",
+    "upgradeFeature": {
+      "unlimitedProjects": "مشاريع غير محدودة",
+      "invoicePayments": "دفعات الفواتير عبر Stripe",
+      "versionHistory": "سجل إصدارات التسليمات",
+      "customBranding": "علامة تجارية مخصصة على البوابة",
+      "pdfExport": "تصدير PDF و CSV",
+      "fileSizePro": "تحميل ملفات حتى 100 ميغابايت",
+      "everything": "كل ميزات Pro",
+      "teamMembers": "حتى 10 أعضاء فريق",
+      "fileSizeAgency": "تحميل ملفات حتى 500 ميغابايت"
+    }
   }
 }
