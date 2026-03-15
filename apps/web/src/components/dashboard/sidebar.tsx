@@ -39,7 +39,7 @@ import {
   Settings,
   Users,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -49,6 +49,9 @@ export function AppSidebar() {
   const { data: session } = authClient.useSession();
   const user = session?.user;
   const t = useTranslations("sidebar");
+  const locale = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
+  const side = dir === "rtl" ? "right" : "left";
 
   const navItems = [
     {
@@ -83,7 +86,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" dir={dir} side={side}>
       {/* Brand */}
       <SidebarHeader>
         <SidebarMenu>

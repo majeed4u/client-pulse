@@ -7,50 +7,50 @@ import { InvoiceView } from "@/components/portal/invoice-view";
 import { useTranslations } from "next-intl";
 
 interface Invoice {
-	id: string;
-	invoiceNumber: string;
-	status: string;
-	currency: string;
-	lineItems: Array<{
-		description: string;
-		quantity: number;
-		unitPrice: number;
-	}>;
-	subtotal: number;
-	taxPercent: number;
-	taxAmount: number;
-	total: number;
-	dueDate: string | null;
-	notes: string | null;
-	stripePaymentLinkUrl: string | null;
+  id: string;
+  invoiceNumber: string;
+  status: string;
+  currency: string;
+  lineItems: Array<{
+    description: string;
+    quantity: number;
+    unitPrice: number;
+  }>;
+  subtotal: number;
+  taxPercent: number;
+  taxAmount: number;
+  total: number;
+  dueDate: string | null;
+  notes: string | null;
+  stripePaymentLinkUrl: string | null;
 }
 
 export function InvoicePageClient({
-	token,
-	serverUrl,
-	invoice,
+  token,
+  serverUrl,
+  invoice,
 }: {
-	token: string;
-	serverUrl: string;
-	invoice: Invoice;
+  token: string;
+  serverUrl: string;
+  invoice: Invoice;
 }) {
-	const t = useTranslations("portal");
-	return (
-		<div className="min-h-screen bg-background">
-			<div className="mx-auto max-w-3xl px-4 py-8">
-				<div className="mb-6 flex items-center gap-3">
-					<Link href={`/portal/${token}` as any}>
-						<Button variant="ghost" size="icon" className="h-8 w-8">
-							<ArrowLeft className="h-4 w-4" />
-						</Button>
-					</Link>
-					<h1 className="font-semibold text-lg">
-						{t("invoiceTitle", { number: invoice.invoiceNumber })}
-					</h1>
-				</div>
+  const t = useTranslations("portal");
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-3xl px-4 py-8">
+        <div className="mb-6 flex items-center gap-3">
+          <Link href={`/portal/${token}` as any}>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="font-semibold text-lg">
+            {t("invoiceTitle", { number: invoice.invoiceNumber })}
+          </h1>
+        </div>
 
-				<InvoiceView invoice={invoice} token={token} serverUrl={serverUrl} />
-			</div>
-		</div>
-	);
+        <InvoiceView invoice={invoice} token={token} serverUrl={serverUrl} />
+      </div>
+    </div>
+  );
 }
