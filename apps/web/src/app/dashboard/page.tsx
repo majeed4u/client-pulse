@@ -66,17 +66,6 @@ const statusColors: Record<string, string> = {
   ARCHIVED: "bg-gray-500/10 text-gray-500 border-gray-200",
 };
 
-const activityLabels: Record<string, string> = {
-  PROJECT_CREATED: "Project created",
-  DELIVERABLE_UPLOADED: "Deliverable uploaded",
-  DELIVERABLE_APPROVED: "Deliverable approved",
-  DELIVERABLE_REJECTED: "Changes requested",
-  FEEDBACK_LEFT: "Feedback left",
-  INVOICE_SENT: "Invoice sent",
-  INVOICE_PAID: "Invoice paid",
-  CLIENT_VIEWED_PORTAL: "Client viewed portal",
-};
-
 export default function DashboardPage() {
   const projectsQuery = useQuery(trpc.projects.list.queryOptions({ limit: 5 }));
   const clientsQuery = useQuery(trpc.clients.list.queryOptions({}));
@@ -108,9 +97,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Welcome back — here's what's happening
+            {t("subtitle")}
           </p>
         </div>
         <Link href="/dashboard/projects/new">
@@ -127,7 +116,7 @@ export default function DashboardPage() {
           title={t("activeProjects")}
           value={activeProjects}
           icon={FolderKanban}
-          description={`${projects.length} total`}
+          description={t("totalProjects", { count: projects.length })}
           loading={loading}
         />
         <StatCard
@@ -140,14 +129,14 @@ export default function DashboardPage() {
           title={t("pendingRevenue")}
           value={`$${(pendingAmount / 100).toLocaleString()}`}
           icon={Clock}
-          description={`${pendingInvoices.length} unpaid invoices`}
+          description={t("unpaidInvoices", { count: pendingInvoices.length })}
           loading={loading}
         />
         <StatCard
           title={t("paidRevenue")}
           value={`$${(paidAmount / 100).toLocaleString()}`}
           icon={DollarSign}
-          description="All time paid"
+          description={t("allTimePaid")}
           loading={loading}
         />
       </div>
@@ -178,7 +167,7 @@ export default function DashboardPage() {
                 </p>
                 <Link href="/dashboard/projects/new" className="mt-2">
                   <Button variant="outline" size="sm">
-                    Create your first project
+                    {t("createFirstProject")}
                   </Button>
                 </Link>
               </div>
@@ -201,10 +190,7 @@ export default function DashboardPage() {
                     variant="outline"
                     className={`ml-3 shrink-0 text-[10px] ${statusColors[project.status] ?? ""}`}
                   >
-                    {project.status
-                      .split("_")
-                      .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
-                      .join(" ")}
+                    {tProjects(`status.${project.status}` as any)}
                   </Badge>
                 </Link>
               ))
@@ -237,7 +223,7 @@ export default function DashboardPage() {
                 </p>
                 <Link href="/dashboard/invoices/new" className="mt-2">
                   <Button variant="outline" size="sm">
-                    Create your first invoice
+                    {t("createFirstInvoice")}
                   </Button>
                 </Link>
               </div>
@@ -286,32 +272,32 @@ export default function DashboardPage() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold">
-            Quick Actions
+            {t("quickActions")}
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           <Link href="/dashboard/projects/new">
             <Button variant="outline" size="sm" className="gap-2">
               <FolderKanban className="h-4 w-4" />
-              New Project
+              {t("quickNewProject")}
             </Button>
           </Link>
           <Link href="/dashboard/clients/new">
             <Button variant="outline" size="sm" className="gap-2">
               <Users className="h-4 w-4" />
-              Add Client
+              {t("quickAddClient")}
             </Button>
           </Link>
           <Link href="/dashboard/invoices/new">
             <Button variant="outline" size="sm" className="gap-2">
               <DollarSign className="h-4 w-4" />
-              Create Invoice
+              {t("quickCreateInvoice")}
             </Button>
           </Link>
           <Link href="/dashboard/settings">
             <Button variant="outline" size="sm" className="gap-2">
               <CheckCircle2 className="h-4 w-4" />
-              Workspace Settings
+              {t("quickSettings")}
             </Button>
           </Link>
         </CardContent>
