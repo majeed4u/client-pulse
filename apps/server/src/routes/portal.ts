@@ -1,5 +1,6 @@
 import prisma from "@client-pulse/db";
 import { Hono } from "hono";
+import { getPresignedDownloadUrl } from "../services/storage";
 
 export const portalRoutes = new Hono();
 
@@ -58,7 +59,20 @@ portalRoutes.get("/:token", async (c) => {
     }),
   ]);
 
-  return c.json({ project, deliverables, threads, invoices });
+  // Generate presigned download URLs for all deliverable versions (1 hour TTL)
+  const deliverablesWithUrls = await Promise.all(
+    deliverables.map(async (d) => ({
+      ...d,
+      versions: await Promise.all(
+        d.versions.map(async (v) => ({
+          ...v,
+          fileUrl: await getPresignedDownloadUrl(v.fileKey, 3600),
+        })),
+      ),
+    })),
+  );
+
+  return c.json({ project, deliverables: deliverablesWithUrls, threads, invoices });
 });
 
 // POST /portal/:token/view — log CLIENT_VIEWED_PORTAL

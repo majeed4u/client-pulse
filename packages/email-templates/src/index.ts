@@ -1,9 +1,9 @@
-export { WelcomeEmail } from "./welcome";
-export { PortalInviteEmail } from "./portal-invite";
-export { ApprovalRequestEmail } from "./approval-request";
 export { ApprovalReceivedEmail } from "./approval-received";
+export { ApprovalRequestEmail } from "./approval-request";
 export { ChangesRequestedEmail } from "./changes-requested";
 export { FeedbackReceivedEmail } from "./feedback-received";
-export { InvoiceSentEmail } from "./invoice-sent";
 export { InvoicePaidEmail } from "./invoice-paid";
 export { InvoiceReminderEmail } from "./invoice-reminder";
+export { InvoiceSentEmail } from "./invoice-sent";
+export { PortalInviteEmail } from "./portal-invite";
+export { WelcomeEmail } from "./welcome";

@@ -110,9 +110,8 @@ export const deliverablesRouter = router({
         input.mimeType,
         900,
       );
-      const fileUrl = ctx.storage.getPublicUrl(fileKey);
 
-      return { presignedUrl, fileKey, fileUrl };
+      return { presignedUrl, fileKey };
     }),
 
   confirmUpload: workspaceProcedure
@@ -120,7 +119,6 @@ export const deliverablesRouter = router({
       z.object({
         deliverableId: z.string(),
         fileKey: z.string().min(1),
-        fileUrl: z.string().url(),
         fileName: z.string().min(1),
         fileSize: z.number().positive(),
         mimeType: z.string().min(1),
@@ -147,7 +145,7 @@ export const deliverablesRouter = router({
           data: {
             deliverableId: input.deliverableId,
             versionNumber: nextVersion,
-            fileUrl: input.fileUrl,
+            fileUrl: input.fileKey,
             fileKey: input.fileKey,
             fileName: input.fileName,
             fileSize: input.fileSize,

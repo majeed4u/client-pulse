@@ -48,7 +48,3 @@ export async function deleteObject(fileKey: string): Promise<void> {
     }),
   );
 }
-
-export function getPublicUrl(fileKey: string): string {
-  return `${env.CLOUDFLARE_R2_PUBLIC_URL}/${fileKey}`;
-}
