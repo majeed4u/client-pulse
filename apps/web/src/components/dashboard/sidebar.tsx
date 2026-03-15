@@ -181,13 +181,13 @@ export function AppSidebar() {
                     {user?.name?.slice(0, 2).toUpperCase() ?? "??"}
                   </AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-start text-sm leading-tight">
                   <span className="truncate font-semibold">{user?.name}</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {user?.email}
                   </span>
                 </div>
-                <ChevronsUpDown className="ml-auto size-4" />
+                <ChevronsUpDown className="ms-auto size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
@@ -198,7 +198,7 @@ export function AppSidebar() {
                 <DropdownMenuItem
                   onClick={() => router.push("/dashboard/settings" as any)}
                 >
-                  <Settings className="mr-2 h-4 w-4" />
+                  <Settings className="me-2 h-4 w-4" />
                   {t("settings")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -206,7 +206,7 @@ export function AppSidebar() {
                   onClick={handleSignOut}
                   className="text-destructive focus:text-destructive"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="me-2 h-4 w-4" />
                   {t("signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
